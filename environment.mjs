@@ -1,5 +1,7 @@
 import fs from 'fs';
 import path from 'path';
+import { spawn } from 'child_process';
+import readline from 'readline';
 import { reviewChange } from './teamlead/index.mjs';
 export class DevEnvironment {
   constructor(rootPath) {
@@ -7,6 +9,64 @@ export class DevEnvironment {
     this.rootPath = rootPath;
     this.browser = null;
     this.page = null;
+    this.shellProcess = null;
+
+    // Start the shell process when the DevEnvironment is created
+    this.startShell();
+  }
+
+  startShell() {
+    try {
+      // Start a shell process (e.g., bash)
+      this.shellProcess = spawn('bash', [], {
+        stdio: ['pipe', 'pipe', 'pipe'], // Set up stdio pipes for stdin, stdout, and stderr
+        cwd: this.rootPath, // Set the current working directory
+      });
+
+      this.shellProcess.on('exit', (code, signal) => {
+        console.log(`Shell process exited with code ${code} and signal ${signal}`);
+      });
+    } catch (error) {
+      throw new Error(`Error starting shell: ${error.message}`);
+    }
+  }
+
+  async GetTerminalText() {
+    return new Promise((resolve, reject) => {
+      const lines = [];
+      const rl = readline.createInterface({
+        input: this.shellProcess.stdout,
+        output: this.shellProcess.stdin,
+        terminal: false,
+      });
+
+      // Read the last 100 lines from the shell process stdout
+      rl.on('line', (line) => {
+        lines.push(line);
+        if (lines.length > 100) {
+          lines.shift();
+        }
+      });
+
+      rl.on('close', () => {
+        resolve(lines.join('\n'));
+      });
+
+      // Handle errors
+      this.shellProcess.on('error', (error) => {
+        reject(`Error reading from terminal: ${error.message}`);
+      });
+    });
+  }
+
+  async WriteOnTerminal(command) {
+    try {
+      // Write the provided command to the terminal
+      this.shellProcess.stdin.write(`${command}\n`);
+      return `Command written on the terminal: ${command}`;
+    } catch (error) {
+      throw new Error(`Error writing on the terminal: ${error.message}`);
+    }
   }
 
   async openBrowser() {
@@ -191,6 +251,7 @@ export class DevEnvironment {
   }
 
   async WriteToFile({filePath, content, summary}) {
+    //TODO: Doesnt write new file because it reads the file first
     // first review the change
     const change = {
       changeType: "WriteToFile",
@@ -255,6 +316,13 @@ export class DevEnvironment {
       return `File renamed successfully from: ${oldFullPath} to ${newFullPath}`;
     } catch (error) {
       throw new Error(`Error renaming file: ${error.message}`);
+    }
+  }
+
+  // Clean up the shell process when the DevEnvironment is destroyed
+  destroy() {
+    if (this.shellProcess) {
+      this.shellProcess.kill();
     }
   }
 }

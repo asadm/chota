@@ -109,5 +109,6 @@ while(true){
     }
 }
 
+sampleEnv.destroy();
 fs.writeFileSync(path.join(process.cwd(), 'log.json'), JSON.stringify(messages, null, 2));
 
