@@ -11,9 +11,8 @@ const openai = new OpenAI({
 
 // const task = "Find the port used by this project and change it to 5000.";
 const task = "Find and move the port constant to index itself, cleanup unused file.";
-
 const sampleEnv = new DevEnvironment(path.join(process.cwd(), 'sample'));
-// Step 1: send the conversation and available functions to GPT
+
 const messages = [
     {"role": "system", "content": `You are a software developer. You are hired to do some contract work.
     As user gives you your task, you can ask questions to clarify the task. Once clarified, you can start working on the task.
@@ -56,7 +55,7 @@ async function runConversation() {
             functionResponse = {error: e.message}
         }
 
-        console.log("fn:", functionName, "args:", functionArgs, "response:", functionResponse, "\n")
+        console.log("🔷", functionName, "(", functionArgs,")\n")
 
         // Step 4: send the info on the function call and function response to GPT
         
@@ -72,7 +71,7 @@ async function runConversation() {
             function_call: "auto",  // auto is default, but we'll be explicit
         });  // get a new response from GPT where it can see the function response
         messages.push(secondResponse.choices[0].message);  // extend conversation with assistant's reply
-        console.log(JSON.stringify(secondResponse), "\n");
+        // console.log(JSON.stringify(secondResponse), "\n");
         // return secondResponse;
         return secondResponse.choices[0]?.finish_reason;
     }
@@ -86,27 +85,42 @@ async function runConversation() {
 
         const responseMessage = response.choices[0].message;
         messages.push(responseMessage);
-        console.log(JSON.stringify(response), "\n");
+        // console.log(JSON.stringify(response), "\n");
         return response.choices[0]?.finish_reason;
     }
     
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 while(true){
-    const finish_reason = await runConversation();
+    let finish_reason;
+    try{
+        finish_reason = await runConversation();
+    }
+    catch(e){
+        if (e.message.indexOf("Rate limit reached") !== -1){
+            console.log("RATE LIMIT REACHED", e.message);
+            await sleep(5000);
+            continue;
+        }
+    }
     if(finish_reason === "stop"){
         // Summary is reviewed by team lead
         try{
             await reviewSummary(messages[1].content, messages[messages.length - 1].content);
-            console.log("REVIEWER APPROVED");
+            console.log("🟢 APPROVED!");
             break;
         }
         catch(e){
-            console.log("REVIEWER REJECTED", e.message);
+            console.log("🔴 REJECTED!", e.message);
             messages.push({role: "system", content: `User Rejected: ${e.message}`});
             continue;
         }
     }
+    await sleep(5000);
 }
 
 sampleEnv.destroy();

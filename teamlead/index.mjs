@@ -10,7 +10,7 @@ const MODEL = "gpt-4-0613" //"gpt-3.5-turbo";
 // const MODEL = "gpt-3.5-turbo";
 
 export async function reviewTerminalCommand(originalTask, command) {
-    console.log("REVIEWING Terminal Command", command)
+    console.log("✋ $", command)
     const messages = [
         {
             "role": "system", "content": `You are a team lead of a programming team responsible for reviewing commands being executed by your team in your project directory. Does the following change make sense, given the Reason at bottom?
@@ -28,7 +28,7 @@ export async function reviewTerminalCommand(originalTask, command) {
 }
 
 export async function reviewChange(change) {
-    console.log("REVIEWING CHANGE", change)
+    console.log("✋", change.changeType, change.reason);
     const messages = [
         {
             "role": "system", "content": `You are a team lead of a programming team responsible for reviewing changes by your team to your project. Does the following change make sense, given the Reason at bottom?
@@ -46,7 +46,7 @@ export async function reviewChange(change) {
 }
 
 export async function reviewSummary(originalTask, summary) {
-    console.log("REVIEWING Summary", summary)
+    console.log("✋", "TaskEnd(", summary, ")");
     const messages = [
         {
             "role": "system", "content": `You are a team lead of a programming team responsible for reviewing job completion by your team to your project. After the job is done, the following is the final summary message by the developer. Does the following message make sense, given the Reason at bottom?

@@ -5,7 +5,7 @@ import readline from 'readline';
 import { reviewChange, reviewTerminalCommand } from './teamlead/index.mjs';
 export class DevEnvironment {
   constructor(rootPath) {
-    console.log('rootPath', rootPath)
+    console.log('>', rootPath)
     this.rootPath = rootPath;
     this.browser = null;
     this.page = null;
