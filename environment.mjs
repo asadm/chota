@@ -104,7 +104,35 @@ export class DevEnvironment {
     }
   }
 
-  GetFileTree() {
+  GetFileTree({ dirPath }) {
+    try {
+      const fullPath = path.join(this.rootPath, dirPath || '');
+      const entries = fs.readdirSync(fullPath);
+      const files = [];
+      const folders = [];
+
+      for (const entry of entries) {
+        const entryPath = path.join(fullPath, entry);
+        const stats = fs.statSync(entryPath);
+
+        if (stats.isDirectory()) {
+          folders.push(entry);
+        } else {
+          files.push(entry);
+        }
+      }
+
+      return {
+        root: fullPath.replace(this.rootPath, ''),
+        files,
+        folders,
+      };
+    } catch (error) {
+      throw new Error(`Error getting file tree: ${error.message}`);
+    }
+  }
+
+  GetFileTreeRecursive({dirPath}) {
     try {
       const getDirectoryContents = (dir) => {
         const entries = fs.readdirSync(dir);
@@ -126,7 +154,10 @@ export class DevEnvironment {
         return { files, folders };
       };
 
-      const fileTree = getDirectoryContents(this.rootPath);
+      const fullPath = path.join(this.rootPath, dirPath || '');
+
+
+      const fileTree = getDirectoryContents(fullPath);
 
       const removeRootPathPrefix = (path) => path.replace(this.rootPath, '');
 

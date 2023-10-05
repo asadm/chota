@@ -4,7 +4,12 @@ const fns = [
     "description": "Get the file tree of the dev environment",
     "parameters": {
       "type": "object",
-      "properties": {},
+      "properties": {
+        "dirPath": {
+          "type": "string",
+          "description": "The path of the sub directory to get the file tree of. If not provided, the file tree of the root directory will be returned."
+        }
+      },
       "required": []
     }
   },
