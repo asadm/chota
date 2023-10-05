@@ -22,8 +22,27 @@ export async function reviewChange(change) {
         `},
         { "role": "user", "content": `ChangeType:\n${change.changeType}\nReason:\n${change.reason} \n Old State:\n${change.old}\nNew State:\n${change.new}` },
     ];
+    
+    return askReviewer(messages);
+}
 
+export async function reviewSummary(originalTask, summary) {
+    console.log("REVIEWING Summary", summary)
+    const messages = [
+        {
+            "role": "system", "content": `You are a team lead of a programming team responsible for reviewing job completion by your team to your project. After the job is done, the following is the final summary message by the developer. Does the following message make sense, given the Reason at bottom?
+        
+        Call the SubmitReview function with your decision and reason.
 
+        The reason should propose the solution if you are rejecting the summary of job. If you are approving, the reason can be short.
+        `},
+        { "role": "user", "content": `Original Task:\n${originalTask}\nTask Done Summary:\n${summary}` },
+    ];
+    
+    return askReviewer(messages);
+}
+
+function askReviewer(messages){
     return new Promise(async (resolve, reject) => {
 
         const response = await openai.chat.completions.create({
@@ -67,5 +86,4 @@ export async function reviewChange(change) {
             }
         }
     });
-
 }

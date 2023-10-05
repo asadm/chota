@@ -4,12 +4,13 @@ import fn from "./fns.mjs";
 import {DevEnvironment} from "./environment.mjs";
 import path from "path";
 import fs from "fs";
+import { reviewSummary } from './teamlead/index.mjs';
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
 // const task = "Find the port used by this project and change it to 5000.";
-const task = "Find and move the port constant to index itself.";
+const task = "Find and move the port constant to index itself, cleanup unused file.";
 
 const sampleEnv = new DevEnvironment(path.join(process.cwd(), 'sample'));
 // Step 1: send the conversation and available functions to GPT
@@ -28,6 +29,8 @@ const messages = [
     Also note to talk minimum. The user is not expecting you to talk a lot. Don't echo back obvious facts like file data or useless facts.
 
     User can only help with providing clarifications for task. User cannot help with technical questions. You can search the internet for help with technical questions.
+
+    At the end, provide the summary of what you did to the user. The user will review your work and provide feedback. If the user is satisfied, the user will pay you. If the user is not satisfied, the user will not pay you. If the user is not satisfied, they will provide a reason for why they are not satisfied. You can use this reason to retry.
     `},
     {"role": "user", "content": task},
 ];
@@ -92,8 +95,17 @@ async function runConversation() {
 while(true){
     const finish_reason = await runConversation();
     if(finish_reason === "stop"){
-        // TODO: do not just stop, ask team lead for review and then stop
-        break;
+        // Summary is reviewed by team lead
+        try{
+            await reviewSummary(messages[1].content, messages[messages.length - 1].content);
+            console.log("REVIEWER APPROVED");
+            break;
+        }
+        catch(e){
+            console.log("REVIEWER REJECTED", e.message);
+            messages.push({role: "system", content: `User Rejected: ${e.message}`});
+            continue;
+        }
     }
 }
 
