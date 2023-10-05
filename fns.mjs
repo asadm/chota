@@ -42,12 +42,16 @@ const fns = [
     "parameters": {
       "type": "object",
       "properties": {
-        "command": {
+        "input": {
           "type": "string",
-          "description": "The command to write on the terminal. The text will be written as is, so make sure to add newlines if needed."
+          "description": "The input to write on the terminal. The text will be written as is, so make sure to add newlines ie. \"\\n\" if you want to execute the command."
+        },
+        "summary": {
+          "type": "string",
+          "description": "The summary of what you are trying to achieve with these commands or input. This will be sent to your team manager to provide context."
         }
       },
-      "required": ["command"]
+      "required": ["command", "summary"]
     }
   },
   {
@@ -125,7 +129,7 @@ const fns = [
   },
   {
     "name": "DeleteFile",
-    "description": "Delete a file",
+    "description": "Delete a file. This will not delete directories. Use WriteOnTerminal function to delete directories from terminal.",
     "parameters": {
       "type": "object",
       "properties": {

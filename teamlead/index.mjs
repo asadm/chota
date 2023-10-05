@@ -8,6 +8,25 @@ const openai = new OpenAI({
 const functions = fn;
 const MODEL = "gpt-4-0613" //"gpt-3.5-turbo";
 // const MODEL = "gpt-3.5-turbo";
+
+export async function reviewTerminalCommand(originalTask, command) {
+    console.log("REVIEWING Terminal Command", command)
+    const messages = [
+        {
+            "role": "system", "content": `You are a team lead of a programming team responsible for reviewing commands being executed by your team in your project directory. Does the following change make sense, given the Reason at bottom?
+
+        Make sure the command does only what's written as reason. If you think the change breaks something or damages the system, reject the change with reason.
+        
+        Call the SubmitReview function with your decision and reason.
+
+        The reason should propose the solution if you are rejecting the change. If you are approving the change, the reason can be short.
+        `},
+        { "role": "user", "content": `Original Task:\n${originalTask}\nCommand being sent to shell terminal:\n${command}` },
+    ];
+    
+    return askReviewer(messages);
+}
+
 export async function reviewChange(change) {
     console.log("REVIEWING CHANGE", change)
     const messages = [

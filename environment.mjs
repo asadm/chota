@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
 import readline from 'readline';
-import { reviewChange } from './teamlead/index.mjs';
+import { reviewChange, reviewTerminalCommand } from './teamlead/index.mjs';
 export class DevEnvironment {
   constructor(rootPath) {
     console.log('rootPath', rootPath)
@@ -10,6 +10,7 @@ export class DevEnvironment {
     this.browser = null;
     this.page = null;
     this.shellProcess = null;
+    this.stdoutData = ''; 
 
     // Start the shell process when the DevEnvironment is created
     this.startShell();
@@ -23,6 +24,14 @@ export class DevEnvironment {
         cwd: this.rootPath, // Set the current working directory
       });
 
+      this.shellProcess.stdout.on('data', (data) => {
+        this.stdoutData += data.toString(); 
+      });
+
+      this.shellProcess.stderr.on('data', (data) => {
+        this.stdoutData += data.toString(); 
+      });
+
       this.shellProcess.on('exit', (code, signal) => {
         console.log(`Shell process exited with code ${code} and signal ${signal}`);
       });
@@ -32,38 +41,25 @@ export class DevEnvironment {
   }
 
   async GetTerminalText() {
-    return new Promise((resolve, reject) => {
-      const lines = [];
-      const rl = readline.createInterface({
-        input: this.shellProcess.stdout,
-        output: this.shellProcess.stdin,
-        terminal: false,
-      });
-
-      // Read the last 100 lines from the shell process stdout
-      rl.on('line', (line) => {
-        lines.push(line);
-        if (lines.length > 100) {
-          lines.shift();
-        }
-      });
-
-      rl.on('close', () => {
-        resolve(lines.join('\n'));
-      });
-
-      // Handle errors
-      this.shellProcess.on('error', (error) => {
-        reject(`Error reading from terminal: ${error.message}`);
-      });
-    });
+    const lines = this.stdoutData.split('\n');
+    const last100Lines = lines.slice(Math.max(lines.length - 100, 0)).join('\n');
+    
+    return last100Lines;
   }
 
-  async WriteOnTerminal(command) {
+  async WriteOnTerminal({ input, summary }) {
+    // first review the change
+    try{
+      await reviewTerminalCommand(summary, input);
+      console.log("WriteOnTerminal approved");
+    }
+    catch(e){
+      throw new Error(`Code Reviewer rejected the change: ${e.message}`);
+    }
     try {
       // Write the provided command to the terminal
-      this.shellProcess.stdin.write(`${command}\n`);
-      return `Command written on the terminal: ${command}`;
+      this.shellProcess.stdin.write(`${input}`);
+      return `Input written on the terminal: ${input}`;
     } catch (error) {
       throw new Error(`Error writing on the terminal: ${error.message}`);
     }
