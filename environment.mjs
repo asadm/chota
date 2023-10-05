@@ -174,6 +174,8 @@ export class DevEnvironment {
     catch(e){
       throw new Error(`Code Reviewer rejected the change: ${e.message}`);
     }
+
+    // then write the file if approved
     try {
       console.log("WriteToFile", filePath, summary);
       const fullPath = path.join(this.rootPath, filePath);
@@ -190,7 +192,21 @@ export class DevEnvironment {
     }
   }
 
-  DeleteFile({filePath}) {
+  async DeleteFile({filePath, summary}) {
+    // first review the change
+    const change = {
+      changeType: "DeleteFile",
+      reason: summary,
+      old: this.GetFileByPath({filePath}),
+      new: "",
+    }
+    try{
+      const review = await reviewChange(change);
+      console.log("change approved", review);
+    }
+    catch(e){
+      throw new Error(`Code Reviewer rejected the change: ${e.message}`);
+    }
     try {
       const fullPath = path.join(this.rootPath, filePath);
       fs.unlinkSync(fullPath);

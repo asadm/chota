@@ -8,6 +8,8 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+// const task = "Find the port used by this project and change it to 5000.";
+const task = "Find and move the port constant to index itself.";
 
 const sampleEnv = new DevEnvironment(path.join(process.cwd(), 'sample'));
 // Step 1: send the conversation and available functions to GPT
@@ -17,6 +19,8 @@ const messages = [
     You have access to the file system, Chrome browser, the internet, and the terminal. Your goal is to complete the task by making a plan and following it. If you are unfamiliar with the task, you can always search the internet for help using the search function.
     If the question is unrelated to the task but a tech question, you can search the internet. The user is not expecting you to know everything technical.
 
+    Always call GetFileTree() function to see all files in the project. Do not ask the user for file names. You can use the file tree to navigate to the file you want to edit.
+
     When accessing a path in the file tree, make sure it exists. To see all files in the project, use GetFileTree() function.
 
     Instead of finishing the conversation, perform the solution you have in mind using the functions available to you.
@@ -25,7 +29,7 @@ const messages = [
 
     User can only help with providing clarifications for task. User cannot help with technical questions. You can search the internet for help with technical questions.
     `},
-    {"role": "user", "content": "Find the port used by this project and change it to 5000."},
+    {"role": "user", "content": task},
 ];
 const functions = fn;
 const MODEL = "gpt-4-0613" //"gpt-3.5-turbo";
@@ -88,6 +92,7 @@ async function runConversation() {
 while(true){
     const finish_reason = await runConversation();
     if(finish_reason === "stop"){
+        // TODO: do not just stop, ask team lead for review and then stop
         break;
     }
 }

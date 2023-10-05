@@ -127,6 +127,10 @@ const fns = [
         "filePath": {
           "type": "string",
           "description": "The path of the file to delete"
+        },
+        "summary": {
+          "type": "string",
+          "description": "The summary of what you are trying to achieve with this delete. This will be sent to your team manager to provide context."
         }
       },
       "required": ["filePath"]
