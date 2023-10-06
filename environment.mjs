@@ -113,7 +113,7 @@ export class DevEnvironment {
       const markdown = turndownService.turndown(article.content);
       const finalMarkdown =`# [${article.title}](${url})\n\n${markdown}`;
 
-      fs.writeFileSync('article.md', finalMarkdown);
+      // fs.writeFileSync('article.md', finalMarkdown);
 
       // answer the question
       const answer = await runPageQuestioner(url, finalMarkdown, question);

@@ -9,7 +9,10 @@ import path from "path";
 
 // localEnv.destroy();
 
-const taskList = await runPMTask("Add an API endpoint to login to this project. Use firebase login and store user to firebase cloudstore database.");
+const taskList = await runPMTask(`
+Task:
+Add an API endpoint to login to this project. Use firebase login and store user to firebase cloudstore database.
+`);
 
 for (const task of taskList) {
     await runDevTask(task);

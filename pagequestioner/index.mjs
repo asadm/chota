@@ -18,8 +18,10 @@ async function runConversation(messages, localFunctions) {
         if (!functionToCall) {
             throw new Error(`Function ${functionName} not found`);
         }
-        const functionArgs = JSON.parse(lastResponse.function_call.arguments);
+        let functionArgs;
         try {
+            functionArgs = JSON.parse(lastResponse.function_call.arguments);
+            console.log("🔷", functionName, "(", functionArgs, ")\n")
             functionResponse = await functionToCall(
                 functionArgs
             );
@@ -28,7 +30,7 @@ async function runConversation(messages, localFunctions) {
             functionResponse = { error: e.message }
         }
 
-        console.log("🔷", functionName, "(", functionArgs, ")\n")
+        
 
         
         return;
