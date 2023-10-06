@@ -1,10 +1,7 @@
 import 'dotenv/config'
-import OpenAI from "openai";
+import { openai } from '../common/openai.mjs';
 import fn from "./fns.mjs";
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
 const functions = fn;
 const MODEL = "gpt-4-0613" //"gpt-3.5-turbo";
 // const MODEL = "gpt-3.5-turbo";

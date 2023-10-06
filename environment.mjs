@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
-import readline from 'readline';
 import { reviewChange, reviewTerminalCommand } from './teamlead/index.mjs';
 export class DevEnvironment {
   constructor(rootPath) {
