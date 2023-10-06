@@ -13,9 +13,10 @@ const serpApiKey = process.env.SERP_API_KEY;
 const googleSearchEndpoint = 'https://serpapi.com/search';
 
 export class DevEnvironment {
-  constructor(rootPath) {
+  constructor(rootPath, overallTaskContext) {
     console.log('>', rootPath)
     this.rootPath = rootPath;
+    this.overallTaskContext = overallTaskContext;
     this.browser = null;
     this.page = null;
     this.shellProcess = null;
@@ -59,7 +60,7 @@ export class DevEnvironment {
   async WriteOnTerminal({ input, summary }) {
     // first review the change
     try{
-      await reviewTerminalCommand(summary, input);
+      await reviewTerminalCommand(summary, input, this.overallTaskContext);
       console.log("WriteOnTerminal approved");
     }
     catch(e){
@@ -291,7 +292,7 @@ export class DevEnvironment {
       new: content,
     }
     try{
-      const review = await reviewChange(change);
+      const review = await reviewChange(change, this.overallTaskContext);
       console.log("change approved", review);
     }
     catch(e){

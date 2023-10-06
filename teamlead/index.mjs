@@ -6,11 +6,11 @@ const functions = fn;
 const MODEL = "gpt-4-0613" //"gpt-3.5-turbo";
 // const MODEL = "gpt-3.5-turbo";
 
-export async function reviewTerminalCommand(originalTask, command) {
+export async function reviewTerminalCommand(originalTask, command, overallTask) {
     console.log("✋ $", command)
     const messages = [
         {
-            "role": "system", "content": `You are a team lead of a programming team responsible for reviewing commands being executed by your team in your project directory. Does the following change make sense, given the Reason at bottom?
+            "role": "system", "content": `You are a team lead of a programming team responsible for reviewing commands being executed by your team in your project directory. Does the following change make sense, given the Reason at bottom and overall goal of the project?
 
         Make sure the command does only what's written as reason. If you think the change breaks something or damages the system, reject the change with reason.
         
@@ -18,17 +18,17 @@ export async function reviewTerminalCommand(originalTask, command) {
 
         The reason should propose the solution if you are rejecting the change. If you are approving the change, the reason can be short.
         `},
-        { "role": "user", "content": `Original Task:\n${originalTask}\nCommand being sent to shell terminal:\n${command}` },
+        { "role": "user", "content": `Overall Project Context And Larger Goal:\n${overallTask}\n\nCurrent Task:\n${originalTask}\nCommand being sent to shell terminal:\n${command}` },
     ];
     
     return askReviewer(messages);
 }
 
-export async function reviewChange(change) {
+export async function reviewChange(change, overallTask) {
     console.log("✋", change.changeType, change.reason);
     const messages = [
         {
-            "role": "system", "content": `You are a team lead of a programming team responsible for reviewing changes by your team to your project. Does the following change make sense, given the Reason at bottom?
+            "role": "system", "content": `You are a team lead of a programming team responsible for reviewing changes by your team to your project. Does the following change make sense, given the Reason at bottom and overall goal of the project?
 
         Make sure the change does only what's written as reason. If you think the change breaks something, reject the change with reason.
         
@@ -36,23 +36,23 @@ export async function reviewChange(change) {
 
         The reason should propose the solution if you are rejecting the change. If you are approving the change, the reason can be short.
         `},
-        { "role": "user", "content": `ChangeType:\n${change.changeType}\nReason:\n${change.reason} \n Old State:\n${change.old}\nNew State:\n${change.new}` },
+        { "role": "user", "content": `Overall Project Context And Larger Goal:\n${overallTask}\n\nChangeType:\n${change.changeType}\nReason:\n${change.reason} \n Old State:\n${change.old}\nNew State:\n${change.new}` },
     ];
     
     return askReviewer(messages);
 }
 
-export async function reviewSummary(originalTask, summary) {
+export async function reviewSummary(originalTask, summary, overallTask) {
     console.log("✋", "TaskEnd(", summary, ")");
     const messages = [
         {
-            "role": "system", "content": `You are a team lead of a programming team responsible for reviewing job completion by your team to your project. After the job is done, the following is the final summary message by the developer. Does the following message make sense, given the Reason at bottom?
+            "role": "system", "content": `You are a team lead of a programming team responsible for reviewing job completion by your team to your project. After the job is done, the following is the final summary message by the developer. Does the following message make sense, given the Reason at bottom and overall goal of the project?
         
         Call the SubmitReview function with your decision and reason.
 
         The reason should propose the solution if you are rejecting the summary of job. If you are approving, the reason can be short.
         `},
-        { "role": "user", "content": `Original Task:\n${originalTask}\nTask Done Summary:\n${summary}` },
+        { "role": "user", "content": `Overall Project Context And Larger Goal:\n${overallTask}\n\nCurrent Task:\n${originalTask}\nTask Done Summary:\n${summary}` },
     ];
     
     return askReviewer(messages);

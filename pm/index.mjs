@@ -36,6 +36,10 @@ async function runConversation(messages, localEnv, localFunctions) {
 
         console.log("🔷", functionName, "(", functionArgs, ")\n")
 
+        if (functionName === "RunTask"){
+            return "stop";
+        }
+
         // Step 4: send the info on the function call and function response to GPT
 
         messages.push({

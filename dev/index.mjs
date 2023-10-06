@@ -69,11 +69,11 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function runDevTask(taskDescription, envPath = path.join(process.cwd(), 'sample')) {
+export async function runDevTask(taskDescription, overallTask, envPath = path.join(process.cwd(), 'sample')) {
     console.log("🐣", "TaskStart(", taskDescription, ")");
     // const task = "Find the port used by this project and change it to 5000.";
     // const task = "Find and move the port constant to index itself, cleanup unused file.";
-    const localEnv = new DevEnvironment(envPath);
+    const localEnv = new DevEnvironment(envPath, overallTask);
 
     const messages = [
         {
@@ -116,7 +116,7 @@ export async function runDevTask(taskDescription, envPath = path.join(process.cw
         if (finish_reason === "stop") {
             // Summary is reviewed by team lead
             try {
-                await reviewSummary(messages[1].content, messages[messages.length - 1].content);
+                await reviewSummary(messages[1].content, messages[messages.length - 1].content, overallTask);
                 console.log("🟢 APPROVED!");
                 break;
             }

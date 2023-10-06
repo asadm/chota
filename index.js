@@ -8,12 +8,15 @@ import path from "path";
 // await localEnv.OpenURLInBrowserAndAskQuestion({url: "https://nextjs.org/docs/pages/building-your-application/routing/custom-error", question: "How do I reuse the built-in error page?"})
 
 // localEnv.destroy();
+const overallTaskContext = `
+Context:
+User: Add an API endpoint to login to this project. Use firebase login and store user to firebase cloudstore database.
+PM: Credentials for firebase?
+User: Use placeholders for now.
 
-const taskList = await runPMTask(`
-Task:
-Add an API endpoint to login to this project. Use firebase login and store user to firebase cloudstore database.
-`);
+`;
+const taskList = await runPMTask(overallTaskContext);
 
 for (const task of taskList) {
-    await runDevTask(task);
+    await runDevTask(task, overallTaskContext);
 }
