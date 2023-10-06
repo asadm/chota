@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import fn from "./fns.mjs";
 import { DevEnvironment } from "../environment.mjs";
+import { logGray } from '../common/log.mjs';
 import path from "path";
 import fs from "fs";
 // import { reviewSummary } from '../teamlead/index.mjs';
@@ -13,7 +14,9 @@ const MODEL = "gpt-4-0613" //"gpt-3.5-turbo";
 
 async function runConversation(messages, localEnv, localFunctions) {
     const lastResponse = messages[messages.length - 1];
-
+    if (lastResponse){
+        logGray(lastResponse);
+    }
     if (lastResponse && lastResponse.function_call) {
         const functionName = lastResponse.function_call.name;
         const functionToCall = localEnv[functionName]?.bind(localEnv) || localFunctions[functionName];
@@ -46,7 +49,10 @@ async function runConversation(messages, localEnv, localFunctions) {
             functions: functions,
             function_call: "auto",  // auto is default, but we'll be explicit
         });  // get a new response from GPT where it can see the function response
-        messages.push(secondResponse.choices[0].message);  // extend conversation with assistant's reply
+        let resp = secondResponse.choices[0].message;
+        if (!resp.content) resp.content = "";
+        messages.push(resp);  // extend conversation with assistant's reply
+        logGray(secondResponse.choices[0].message);
         // console.log(JSON.stringify(secondResponse), "\n");
         // return secondResponse;
         return secondResponse.choices[0]?.finish_reason;
@@ -102,9 +108,11 @@ export async function runPMTask(taskDescription, envPath = path.join(process.cwd
             "role": "system", "content": `You are a customer facing software project manager. Your team is hired to do some contract work.
         As user gives you your task, and do the following process:
         1. Check the existing codebase by using the GetFileTree function and GetFileByPath function.
-        2. Write a detailed list of tasks to complete the job. The developers do not know the details of the overall project, so you need to be very specific in your individual tasks.
-        3. If you need to clarify the task, use the AskQuestion function.
-        4. Once you are satisfied with your task list, call the RunTask function with the task list.
+        2. Use SearchOnInternet function to search for latest solution to the problem. Your knowledge of the problem is stale, so you need to search for the solution.
+        3. From search results, open and research a page in new browser tab by using OpenURLInBrowserAndAskQuestion function. Do this as many times as you need to understand the problem and solution.
+        4. Write a detailed list of tasks to complete the job. The developers do not know the details of the overall project, so you need to be very specific in your individual tasks.
+        5. If you need to clarify the task, use the AskQuestion function.
+        6. Once you are satisfied with your task list, call the RunTask function with the task list.
 
         Do note that each task should only be under 50 lines of code change. If you need to change more than 50 lines of code, you need to break it down into multiple tasks.
     `},
@@ -124,10 +132,10 @@ export async function runPMTask(taskDescription, envPath = path.join(process.cwd
                 continue;
             }
             else{
-                console.log("ERROR", e.message);
+                console.log("ERROR", e);
             }
         }
-        if (finish_reason === "stop") {
+        if (finish_reason === "stop" || runTaskCalled) {
             // Summary is reviewed by team lead
             if (!runTaskCalled){
                 console.log("🔴 REJECTED!", "RunTask was not called.");

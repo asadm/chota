@@ -55,42 +55,46 @@ const fns = [
     }
   },
   {
-    "name": "OpenURLInBrowser",
-    "description": "Open a URL in a new tab in browser",
+    "name": "OpenURLInBrowserAndAskQuestion",
+    "description": "Open a URL in a new tab in browser and ask a question from the page. Returns the answer to the question if found.",
     "parameters": {
       "type": "object",
       "properties": {
         "url": {
           "type": "string",
           "description": "The URL to open in the browser"
+        },
+        "question": {
+          "type": "string",
+          "description": "The question or intent to ask from the page"
         }
       },
-      "required": ["url"]
+      "required": ["url", "question"]
     }
   },
-  {
-    "name": "GetCurrentBrowserTabs",
-    "description": "Get the currently open browser tabs",
-    "parameters": {
-      "type": "object",
-      "properties": {},
-      "required": []
-    }
-  },
-  {
-    "name": "CloseBrowserTab",
-    "description": "Close a browser tab by index. As returned by GetCurrentBrowserTabs function",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "index": {
-          "type": "integer",
-          "description": "The index of the tab to close"
-        }
-      },
-      "required": ["index"]
-    }
-  },
+  // {
+  //   "name": "GetCurrentBrowserTabs",
+  //   "description": "Get the currently open browser tabs",
+  //   "parameters": {
+  //     "type": "object",
+  //     "properties": {},
+  //     "required": []
+  //   }
+  // },
+  // {
+  //   "name": "CloseBrowserTab",
+  //   "description": "Close a browser tab by index. As returned by GetCurrentBrowserTabs function",
+  //   "parameters": {
+  //     "type": "object",
+  //     "properties": {
+  //       "index": {
+  //         "type": "integer",
+  //         "description": "The index of the tab to close"
+  //       }
+  //     },
+  //     "required": ["index"]
+  //   }
+  // },
   {
     "name": "SearchOnInternet",
     "description": "Search the internet with a search query",

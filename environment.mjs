@@ -2,6 +2,16 @@ import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
 import { reviewChange, reviewTerminalCommand } from './teamlead/index.mjs';
+import axios from 'axios';
+import {Readability} from '@mozilla/readability';
+import { JSDOM } from 'jsdom';
+import TurndownService from 'turndown';
+import puppeteer from 'puppeteer';
+import { runPageQuestioner } from './pagequestioner/index.mjs';
+
+const serpApiKey = process.env.SERP_API_KEY;
+const googleSearchEndpoint = 'https://serpapi.com/search';
+
 export class DevEnvironment {
   constructor(rootPath) {
     console.log('>', rootPath)
@@ -66,7 +76,7 @@ export class DevEnvironment {
 
   async openBrowser() {
     try {
-      this.browser = await puppeteer.launch();
+      this.browser = await puppeteer.launch({headless: "new"});
       this.page = await this.browser.newPage();
     } catch (error) {
       throw new Error(`Error opening browser: ${error.message}`);
@@ -85,78 +95,104 @@ export class DevEnvironment {
     }
   }
 
-  async OpenURLInBrowser(url) {
+  async OpenURLInBrowserAndAskQuestion({url, question}) {
     try {
       if (!this.page) {
         await this.openBrowser();
       }
 
       await this.page.goto(url);
+      const data = await this.page.content();
+      const doc = new JSDOM(data, {
+        url,
+      });
 
-      return `Opened URL in the browser: ${url}`;
+      const reader = new Readability(doc.window.document);
+      const article = reader.parse();
+      const turndownService = new TurndownService();
+      const markdown = turndownService.turndown(article.content);
+      const finalMarkdown =`# [${article.title}](${url})\n\n${markdown}`;
+
+      fs.writeFileSync('article.md', finalMarkdown);
+
+      // answer the question
+      const answer = await runPageQuestioner(url, finalMarkdown, question);
+
+      return answer;
+      
+
     } catch (error) {
+      console.log(error);
       throw new Error(`Error opening URL in browser: ${error.message}`);
     }
   }
 
-  async GetCurrentBrowserTabs() {
-    try {
-      if (!this.page) {
-        throw new Error('Browser is not open');
-      }
+  // async GetCurrentBrowserTabs() {
+  //   try {
+  //     if (!this.page) {
+  //       throw new Error('Browser is not open');
+  //     }
 
-      const pages = await this.browser.pages();
-      const tabs = [];
+  //     const pages = await this.browser.pages();
+  //     const tabs = [];
 
-      for (const page of pages) {
-        const title = await page.title();
-        const pageUrl = page.url();
-        tabs.push({ title, url: pageUrl });
-      }
+  //     for (const page of pages) {
+  //       const title = await page.title();
+  //       const pageUrl = page.url();
+  //       tabs.push({ title, url: pageUrl });
+  //     }
 
-      return tabs;
-    } catch (error) {
-      throw new Error(`Error getting current browser tabs: ${error.message}`);
-    }
-  }
+  //     return tabs;
+  //   } catch (error) {
+  //     throw new Error(`Error getting current browser tabs: ${error.message}`);
+  //   }
+  // }
 
-  async CloseBrowserTab(index) {
-    try {
-      if (!this.page) {
-        throw new Error('Browser is not open');
-      }
+  // async CloseBrowserTab(index) {
+  //   try {
+  //     if (!this.page) {
+  //       throw new Error('Browser is not open');
+  //     }
 
-      const pages = await this.browser.pages();
+  //     const pages = await this.browser.pages();
 
-      if (index >= 0 && index < pages.length) {
-        const pageToClose = pages[index];
-        await pageToClose.close();
-        return `Closed browser tab at index ${index}`;
-      } else {
-        throw new Error(`Invalid tab index: ${index}`);
-      }
-    } catch (error) {
-      throw new Error(`Error closing browser tab: ${error.message}`);
-    }
-  }
+  //     if (index >= 0 && index < pages.length) {
+  //       const pageToClose = pages[index];
+  //       await pageToClose.close();
+  //       return `Closed browser tab at index ${index}`;
+  //     } else {
+  //       throw new Error(`Invalid tab index: ${index}`);
+  //     }
+  //   } catch (error) {
+  //     throw new Error(`Error closing browser tab: ${error.message}`);
+  //   }
+  // }
 
   async SearchOnInternet(query) {
     try {
-      const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-      await this.OpenURLInBrowser(googleSearchUrl);
-      const searchResults = await this.page.$$eval('.rc', (results) => {
-        return results.map((result) => {
-          const title = result.querySelector('h3').textContent;
-          const description = result.querySelector('.s').textContent;
-          const url = result.querySelector('.r a').href;
-          return { title, description, url };
-        });
+      const response = await axios.get(googleSearchEndpoint, {
+          params: {
+              q: query,
+              api_key: serpApiKey,
+              engine: 'google'
+          }
       });
 
-      return searchResults;
-    } catch (error) {
-      throw new Error(`Error searching on the internet: ${error.message}`);
-    }
+      if (response.data) {
+        const results = response.data.organic_results.map((result) => {
+          return {
+            title: result.title,
+            url: result.link,
+            description: result.snippet
+          }
+        });
+        console.log("SearchOnInternet", results);
+        return results;
+      }
+  } catch (error) {
+      console.error('Error making the search request', error);
+  }
+  return null;
   }
 
   GetFileTree({ dirPath }) {
@@ -318,6 +354,9 @@ export class DevEnvironment {
   destroy() {
     if (this.shellProcess) {
       this.shellProcess.kill();
+    }
+    if (this.page){
+      this.closeBrowser();
     }
   }
 }
