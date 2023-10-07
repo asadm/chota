@@ -1,5 +1,6 @@
 import { runDevTask } from "./dev/index.mjs";
 import { runPMTask } from "./pm/index.mjs";
+import { runQATask } from "./qa/index.mjs";
 import { DevEnvironment } from "./environment.mjs";
 import path from "path";
 
@@ -18,5 +19,11 @@ User: Use placeholders for now.
 const taskList = await runPMTask(overallTaskContext);
 
 for (const task of taskList) {
+  // TODO: get summary from dev here
     await runDevTask(task, overallTaskContext);
 }
+
+const qaResult = await runQATask(overallTaskContext);
+
+// TODO: ask lead or pm feedback on qa bugs and summary and close if insignificant or assign to dev if significant
+console.log("QA RESULT", qaResult);
