@@ -66,7 +66,8 @@ export async function reviewQABugReport(bugReport, overallTask) {
         
         Call the SubmitReview function with your decision and reason.
 
-        The reason should defend your decision to reject the bug report, if you are rejecting the summary of job. If you are approving, the reason can be short.
+        If Rejecting the bug: The reason should defend your decision to reject the bug report, if you are rejecting the summary of job. 
+        If you are approving, the reason should include instructions and guidance for the developer to fix the bug.
         `},
         { "role": "user", "content": `Overall Project Context And Larger Goal:\n${overallTask}\n\n Bug Report:\n${bugReport}` },
     ];

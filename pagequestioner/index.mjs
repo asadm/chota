@@ -80,7 +80,10 @@ export async function runPageQuestioner(url, content, question) {
 
             Make sure you quote the entire section relevant. Do not summarize or paraphrase. Answer the question completely and in great detail.
 
-            If the page does not have the answer, you can say "The page does not have the answer."
+            If the page does not have the answer, you can say "The page does not have the answer.
+            
+            ALWAYS CALL THE ANSWER FUNCTION. If you do not call the answer function, your answer will be rejected.
+            "
     `},
         { "role": "user", "content": `Page Content of ${url}:\n${trimStringToMaxWords(content, 6000)}\n\n\nQuestion:\n${question}` },
     ];

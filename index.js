@@ -28,21 +28,24 @@ for (const task of taskList) {
 
 let bugList = [];
 do{
+  bugList = [];
   // const bugs = ["There is no code implementation found for an API endpoint for user login using Firebase Authentication."]
   // const summary = "";
   const {bugs, summary} = await runQATask(overallTaskContext);
   console.log("QA Summary", summary)
   for (const bug of bugs){
     try{
-      await reviewQABugReport(bug, overallTaskContext);
-      bugList.push(bug);
+      const leadInstruction = await reviewQABugReport(bug, overallTaskContext);
+      bugList.push({bug, leadInstruction});
     }
     catch(e){
       console.log("BUG REJECTED", e);
     }
   }
 
-  //TODO: ask dev to fix bugs here
+  for (const bug of bugList){
+    await runDevTask(`Bug Report:\n${bug.bug} \n\nTeam Lead Instructions:\n${bug.leadInstruction}`, overallTaskContext);
+  }
 }
 while(bugList.length > 0);
 

@@ -90,7 +90,7 @@ export async function runQATask(context, envPath = path.join(process.cwd(), 'sam
     const localFunctions = {
         "FileBug": async function (args) {
             console.log("🐛", args);
-            bugList.push(args);
+            bugList.push(args.description);
             return "Bug filed.";
         },
         "EndQA": async function (args) {
