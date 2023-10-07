@@ -43,7 +43,7 @@ export async function reviewChange(change, overallTask) {
 }
 
 export async function reviewSummary(originalTask, summary, overallTask) {
-    console.log("✋", "TaskEnd(", summary, ")");
+    console.log("✋", "reviewSummary(", summary, ")");
     const messages = [
         {
             "role": "system", "content": `You are a team lead of a programming team responsible for reviewing job completion by your team to your project. After the job is done, the following is the final summary message by the developer. Does the following message make sense, given the Reason at bottom and overall goal of the project?
@@ -53,6 +53,22 @@ export async function reviewSummary(originalTask, summary, overallTask) {
         The reason should propose the solution if you are rejecting the summary of job. If you are approving, the reason can be short.
         `},
         { "role": "user", "content": `Overall Project Context And Larger Goal:\n${overallTask}\n\nCurrent Task:\n${originalTask}\nTask Done Summary:\n${summary}` },
+    ];
+    
+    return askReviewer(messages);
+}
+
+export async function reviewQABugReport(bugReport, overallTask) {
+    console.log("✋", "reviewQABugReport(", bugReport, ")");
+    const messages = [
+        {
+            "role": "system", "content": `You are a team lead of a programming team responsible for responding to bug report by QA against your team's work. Does the following bug report make sense? If it does, approve the bug report so it is assigned to your team. If it doesn't, reject the bug report with reason.
+        
+        Call the SubmitReview function with your decision and reason.
+
+        The reason should defend your decision to reject the bug report, if you are rejecting the summary of job. If you are approving, the reason can be short.
+        `},
+        { "role": "user", "content": `Overall Project Context And Larger Goal:\n${overallTask}\n\n Bug Report:\n${bugReport}` },
     ];
     
     return askReviewer(messages);
