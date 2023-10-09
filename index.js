@@ -13,6 +13,8 @@ import { reviewQABugReport } from "./teamlead/index.mjs";
 //   summary: "Adding the missing 'PORT' property in 'constants.js' to resolve the bug"
 // });
 
+// await localEnv.OpenURLInBrowserAndAskQuestion({"url": "https://github.com/actions/github-script", "question": "How to log issue and its comments using github actions?"})
+
 // process.exit(0);
 
 // await localEnv.OpenURLInBrowserAndAskQuestion({url: "https://nextjs.org/docs/pages/building-your-application/routing/custom-error", question: "How do I reuse the built-in error page?"})
@@ -28,8 +30,10 @@ Also log the issue and all its comments to the console in index.js
 // const overallTaskContext = `Create a basic http server that listens on port 3333`
 const taskList = await runPMTask(overallTaskContext);
 
+let taskListSummaries = [];
 for (const task of taskList) {
-    await runDevTask(task, overallTaskContext);
+    const resultSummary = await runDevTask(task, overallTaskContext + "\n\nWork done so far:\n"  + taskListSummaries.map(s=> `Dev: ${s}`).join("\n\n"));
+    taskListSummaries.push(resultSummary);
 }
 
 

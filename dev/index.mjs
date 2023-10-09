@@ -73,6 +73,7 @@ export async function runDevTask(taskDescription, overallTask, envPath = path.jo
     console.log("🐣", "TaskStart(", taskDescription, ")");
     // const task = "Find the port used by this project and change it to 5000.";
     // const task = "Find and move the port constant to index itself, cleanup unused file.";
+    let finalSummary = "";
     const localEnv = new DevEnvironment(envPath, overallTask);
 
     const messages = [
@@ -91,6 +92,8 @@ export async function runDevTask(taskDescription, overallTask, envPath = path.jo
     Also note to talk minimum. The user is not expecting you to talk a lot. Don't echo back obvious facts like file data or useless facts.
 
     User can only help with providing clarifications for task. User cannot help with technical questions. You can search the internet for help with technical questions.
+
+    If the task is already completed by a previous developer or the task is a no-op, say so.
 
     At the end, provide the summary of what you did to the user. The user will review your work and provide feedback. If the user is satisfied, the user will pay you. If the user is not satisfied, the user will not pay you. If the user is not satisfied, they will provide a reason for why they are not satisfied. You can use this reason to retry.
     `},
@@ -118,6 +121,7 @@ export async function runDevTask(taskDescription, overallTask, envPath = path.jo
             try {
                 await reviewSummary(messages[1].content, messages[messages.length - 1].content, overallTask);
                 console.log("🟢 APPROVED!");
+                finalSummary = messages[messages.length - 1].content;
                 break;
             }
             catch (e) {
@@ -136,5 +140,7 @@ export async function runDevTask(taskDescription, overallTask, envPath = path.jo
 
     localEnv.destroy();
     fs.writeFileSync(path.join(process.cwd(), 'log.json'), JSON.stringify(messages, null, 2));
+
+    return finalSummary;
 }
 

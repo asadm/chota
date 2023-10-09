@@ -50,6 +50,7 @@ export async function reviewSummary(originalTask, summary, overallTask) {
         {
             "role": "system", "content": `You are a team lead of a programming team responsible for reviewing job completion by your team to your project. After the job is done, the following is the final summary message by the developer. Does the following message make sense, given the Reason at bottom and overall goal of the project?
         
+            Sometimes the task is a no-op and nothing needs to be done. If you think the task is a no-op, approve the summary so the developer can move on to the next task.
         Call the SubmitReview function with your decision and reason.
 
         The reason should propose the solution if you are rejecting the summary of job. If you are approving, the reason can be short.
