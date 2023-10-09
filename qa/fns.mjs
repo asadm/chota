@@ -5,6 +5,8 @@ const envFunctionsAvailableToQA = [
   "GetFileByPath",
   "SearchOnInternet",
   "OpenURLInBrowserAndAskQuestion",
+  "WriteOnTerminal",
+  "GetTerminalText",
 ]
 
 const fns = [
@@ -31,6 +33,10 @@ const fns = [
         "summary": {
           "type": "string",
           "description": "The summary of the QA findings"
+        },
+        "runnable": {
+          "type": "string",
+          "description": "Was the project runnable? If no, then a description of why not."
         }
       },
       "required": ["summary"]

@@ -31,8 +31,8 @@ do{
   bugList = [];
   // const bugs = ["There is no code implementation found for an API endpoint for user login using Firebase Authentication."]
   // const summary = "";
-  const {bugs, summary} = await runQATask(overallTaskContext);
-  console.log("QA Summary", summary)
+  const {bugs, summary, runnable} = await runQATask(overallTaskContext);
+  console.log("QA Summary", summary, "runnable?", runnable)
   for (const bug of bugs){
     try{
       const leadInstruction = await reviewQABugReport(bug, overallTaskContext);
@@ -48,6 +48,3 @@ do{
   }
 }
 while(bugList.length > 0);
-
-// TODO: ask lead or pm feedback on qa bugs and summary and close if insignificant or assign to dev if significant
-// console.log("QA RESULT", qaResult);

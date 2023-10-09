@@ -1,1 +1,6 @@
-this is empty. delete me
+{
+  "name": "sample",
+  "scripts": {
+    "gooo": "node index.js"
+  }
+}
