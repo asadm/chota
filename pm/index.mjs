@@ -118,7 +118,10 @@ export async function runPMTask(taskDescription, envPath = path.join(process.cwd
         5. If you need to clarify the task, use the AskQuestion function.
         6. Once you are satisfied with your task list, call the RunTask function with the task list.
 
-        Do note that each task should only be under 50 lines of code change. If you need to change more than 50 lines of code, you need to break it down into multiple tasks.
+        Do note that each task should be actionable ON ITS OWN. Preferably around 50 lines of code change. If you need to change more than 50 lines of code, break it down into multiple tasks.
+
+        Also, avoid putting implementation details in the task list. For example, instead of saying "Change the port number in the file", say "Find the port used by this project and change it to 5000."
+        You may provide code snippets you researched as an example.
     `},
         { "role": "user", "content": taskDescription },
     ];

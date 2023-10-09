@@ -286,10 +286,18 @@ export class DevEnvironment {
   async WriteToFile({filePath, content, summary}) {
     //TODO: Doesnt write new file because it reads the file first
     // first review the change
+    let oldFile = "";
+    try{
+      oldFile = this.GetFileByPath({filePath});
+    }
+    catch(e){
+      console.log("WriteToFile: File doesn't exist maybe?", e.message);
+      // file doesnt exist, so its a new file
+    }
     const change = {
       changeType: "WriteToFile",
       reason: summary,
-      old: this.GetFileByPath({filePath}),
+      old: oldFile,
       new: content,
     }
     try{
