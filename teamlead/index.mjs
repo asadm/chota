@@ -31,6 +31,8 @@ export async function reviewChange(change, overallTask) {
             "role": "system", "content": `You are a team lead of a programming team responsible for reviewing changes by your team to your project. Does the following change make sense, given the Reason at bottom and overall goal of the project?
 
         Make sure the change does only what's written as reason. If you think the change breaks something, reject the change with reason.
+
+        Do note that the reason may be a step in a larger goal. If you think the change is not a step in the larger goal, reject the change with reason.
         
         Call the SubmitReview function with your decision and reason.
 

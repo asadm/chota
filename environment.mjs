@@ -277,6 +277,7 @@ export class DevEnvironment {
       const fullPath = path.join(this.rootPath, filePath);
       return fs.readFileSync(fullPath, 'utf8');
     } catch (error) {
+      console.log("GetFileByPath", error.message);
       // if file doesnt exist, check absolute path
       throw new Error(`Error reading file: ${error.message}`);
     }
@@ -292,6 +293,7 @@ export class DevEnvironment {
       new: content,
     }
     try{
+      console.log("going for review:",  filePath, summary, path.join(this.rootPath, filePath));
       const review = await reviewChange(change, this.overallTaskContext);
       console.log("change approved", review);
     }
@@ -310,8 +312,10 @@ export class DevEnvironment {
 
       // Write content to the file
       fs.writeFileSync(fullPath, content);
+      console.log("WriteToFile", fullPath, "written");
       return `File written successfully at: ${fullPath}`;
     } catch (error) {
+      console.log("WriteToFile", error.message)
       throw new Error(`Error writing to file: ${error.message}`);
     }
   }

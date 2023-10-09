@@ -123,7 +123,7 @@ export async function runQATask(context, envPath = path.join(process.cwd(), 'sam
         { "role": "user", "content": context },
     ];
 
-
+    let retryCount = 0;
     while (true) {
         let finish_reason;
         try {
@@ -142,6 +142,10 @@ export async function runQATask(context, envPath = path.join(process.cwd(), 'sam
         if (finish_reason === "stop" || endQACalled) {
             // Summary is reviewed by team lead
             if (!endQACalled){
+                retryCount++;
+                if (retryCount > 5) {
+                    throw new Error("EndQA was not called.");
+                }
                 console.log("🔴 REJECTED!", "EndQA was not called.");
                 messages.push({ role: "system", content: `Answer Rejected: EndQA function was not called.` });
             }

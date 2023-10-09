@@ -97,7 +97,7 @@ export async function runDevTask(taskDescription, overallTask, envPath = path.jo
         { "role": "user", "content": taskDescription },
     ];
 
-
+    let retriesCount = 0;
     while (true) {
         let finish_reason;
         try {
@@ -121,7 +121,12 @@ export async function runDevTask(taskDescription, overallTask, envPath = path.jo
                 break;
             }
             catch (e) {
+                if (retriesCount > 5) {
+                    console.log("SKIPPING Task!", e.message);
+                    break;
+                }
                 console.log("🔴 REJECTED!", e.message);
+                retriesCount++;
                 messages.push({ role: "system", content: `User Rejected: ${e.message}` });
                 continue;
             }
