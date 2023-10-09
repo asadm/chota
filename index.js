@@ -13,32 +13,31 @@ import { reviewQABugReport } from "./teamlead/index.mjs";
 //   summary: "Adding the missing 'PORT' property in 'constants.js' to resolve the bug"
 // });
 
-// await localEnv.OpenURLInBrowserAndAskQuestion({"url": "https://github.com/actions/github-script", "question": "How to log issue and its comments using github actions?"})
+// const ans = await localEnv.OpenURLInBrowserAndAskQuestion({"url": "https://github.com/actions/github-script", "question": "How to retry?"})
+// console.log("ANSWER", ans);
 
 // process.exit(0);
 
 // await localEnv.OpenURLInBrowserAndAskQuestion({url: "https://nextjs.org/docs/pages/building-your-application/routing/custom-error", question: "How do I reuse the built-in error page?"})
 
 // localEnv.destroy();
-// const overallTaskContext = `
-// Context:
-// PREVIOUS MESSAGES:
-// User: I want a github action here that runs the index.js on every new issue or issue comment.
-// Also log the issue and all its comments to the console in index.js
-
-// Use npm package @actions/github to get the issue and its comments from the current action's context.
-
-// NEW MESSAGES:
-// User: The task seems to be incomplete. The issue-action.yml is not running the index.js. The context in index.js is missing. Connect them.
-
-// `;
-
 const overallTaskContext = `
 Context:
 NEW MESSAGES:
-User: Write a README that explains what this project does.
+User: I want a github action here that runs the index.js on every new issue or issue comment.
+Also log the issue and all its comments to the console in index.js
+
+Use npm package @actions/github to get the issue and its comments from the current action's context.
+
 
 `;
+
+// const overallTaskContext = `
+// Context:
+// NEW MESSAGES:
+// User: Write a README that explains what this project does.
+
+// `;
 
 // const overallTaskContext = `Create a basic http server that listens on port 3333`
 const taskList = await runPMTask(overallTaskContext);
