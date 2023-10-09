@@ -20,10 +20,23 @@ import { reviewQABugReport } from "./teamlead/index.mjs";
 // await localEnv.OpenURLInBrowserAndAskQuestion({url: "https://nextjs.org/docs/pages/building-your-application/routing/custom-error", question: "How do I reuse the built-in error page?"})
 
 // localEnv.destroy();
+// const overallTaskContext = `
+// Context:
+// PREVIOUS MESSAGES:
+// User: I want a github action here that runs the index.js on every new issue or issue comment.
+// Also log the issue and all its comments to the console in index.js
+
+// Use npm package @actions/github to get the issue and its comments from the current action's context.
+
+// NEW MESSAGES:
+// User: The task seems to be incomplete. The issue-action.yml is not running the index.js. The context in index.js is missing. Connect them.
+
+// `;
+
 const overallTaskContext = `
 Context:
-User: I want a github action here that runs the index.js on every new issue or issue comment.
-Also log the issue and all its comments to the console in index.js
+NEW MESSAGES:
+User: Write a README that explains what this project does.
 
 `;
 

@@ -9,7 +9,7 @@ const MODEL = "gpt-3.5-turbo-16k";
 async function runConversation(messages, localFunctions) {
     const lastResponse = messages[messages.length - 1];
     if (lastResponse){
-        logGray(lastResponse.role, lastResponse.content?lastResponse.content.slice(0, 100):"");
+        logGray(lastResponse.role, lastResponse.content?lastResponse.content.slice(0, 100):lastResponse);
     }
     if (lastResponse && lastResponse.function_call) {
         const functionName = lastResponse.function_call.name;
