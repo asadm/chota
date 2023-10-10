@@ -5,7 +5,7 @@ import { DevEnvironment } from "./environment.mjs";
 import path from "path";
 import { reviewQABugReport } from "./teamlead/index.mjs";
 
-// const localEnv = new DevEnvironment(path.join(process.cwd(), 'sample'));
+const localEnv = new DevEnvironment(path.join(process.cwd(), 'sample'));
 
 // await localEnv.WriteToFile({
 //   filePath: 'constants.js',
@@ -40,11 +40,11 @@ Use npm package @actions/github to get the issue and its comments from the curre
 // `;
 
 // const overallTaskContext = `Create a basic http server that listens on port 3333`
-const taskList = await runPMTask(overallTaskContext);
+const taskList = await runPMTask(overallTaskContext, localEnv);
 
 let taskListSummaries = [];
 for (const task of taskList) {
-    const resultSummary = await runDevTask(task, overallTaskContext + "\n\nWork done so far:\n"  + taskListSummaries.map(s=> `Dev: ${s}`).join("\n\n"));
+    const resultSummary = await runDevTask(task, overallTaskContext + "\n\nWork done so far:\n"  + taskListSummaries.map(s=> `Dev: ${s}`).join("\n\n"), localEnv);
     taskListSummaries.push(resultSummary);
 }
 
@@ -58,7 +58,7 @@ do{
   let runnable = "";
 
   try{
-    const resp = await runQATask(overallTaskContext);
+    const resp = await runQATask(overallTaskContext, localEnv);
     summary = resp.summary;
     bugs = resp.bugs;
     runnable = resp.runnable;
@@ -80,7 +80,11 @@ do{
 
   for (const bug of bugList){
     const rep = `Bug Report:\n${bug.bug} \n\nTeam Lead Instructions:\n${bug.leadInstruction}`;
-    await runDevTask(rep, overallTaskContext + "\n\n" + rep);
+    await runDevTask(rep, overallTaskContext + "\n\n" + rep, localEnv);
   }
 }
 while(bugList.length > 0);
+
+console.log("FINISHED");
+
+localEnv.destroy();

@@ -83,7 +83,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function runQATask(context, envPath = path.join(process.cwd(), 'sample')) {
+export async function runQATask(context, localEnv) {
     let bugList = [];
     let endQACalled = false;
     let endQASummary = "";
@@ -105,7 +105,6 @@ export async function runQATask(context, envPath = path.join(process.cwd(), 'sam
     console.log("🔍", "runQATask(", context, ")");
     // const task = "Find the port used by this project and change it to 5000.";
     // const task = "Find and move the port constant to index itself, cleanup unused file.";
-    const localEnv = new DevEnvironment(envPath);
 
     const messages = [
         {
@@ -156,7 +155,6 @@ export async function runQATask(context, envPath = path.join(process.cwd(), 'sam
         await sleep(5000);
     }
 
-    localEnv.destroy();
     fs.writeFileSync(path.join(process.cwd(), 'log.qa.json'), JSON.stringify(messages, null, 2));
     return {bugs: bugList, summary: endQASummary};
 }

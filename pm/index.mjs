@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import fn from "./fns.mjs";
-import { DevEnvironment } from "../environment.mjs";
+// import { DevEnvironment } from "../environment.mjs";
 import { logGray } from '../common/log.mjs';
 import path from "path";
 import fs from "fs";
@@ -81,7 +81,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function runPMTask(taskDescription, envPath = path.join(process.cwd(), 'sample')) {
+export async function runPMTask(taskDescription, localEnv) {
     let runTaskCalled = false;
     let taskListFromPM = [];
     const localFunctions = {
@@ -105,7 +105,7 @@ export async function runPMTask(taskDescription, envPath = path.join(process.cwd
     console.log("🐣", "TaskStart(", taskDescription, ")");
     // const task = "Find the port used by this project and change it to 5000.";
     // const task = "Find and move the port constant to index itself, cleanup unused file.";
-    const localEnv = new DevEnvironment(envPath);
+    // const localEnv = new DevEnvironment(envPath);
 
     const messages = [
         {
