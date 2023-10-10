@@ -111,8 +111,8 @@ function askReviewer(messages){
             if (!functionToCall) {
                 throw new Error(`Function ${functionName} not found`);
             }
-            const functionArgs = JSON.parse(responseMessage.function_call.arguments);
             try {
+                const functionArgs = JSON.parse(responseMessage.function_call.arguments);
                 functionToCall(
                     functionArgs
                 );
