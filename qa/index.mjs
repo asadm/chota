@@ -24,8 +24,9 @@ async function runConversation(messages, localEnv, localFunctions) {
         if (!functionToCall) {
             throw new Error(`Function ${functionName} not found`);
         }
-        const functionArgs = JSON.parse(lastResponse.function_call.arguments);
+        let functionArgs;
         try {
+            functionArgs = JSON.parse(lastResponse.function_call.arguments);
             functionResponse = await functionToCall(
                 functionArgs
             );
@@ -83,7 +84,33 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function runQATask(context, localEnv) {
+const originalQAInstruction = `You are a senior QA engineer of your team. Your team has sent you the task they claim to have finished for the user.
+Look at the original context and requirement of user. Then review the task and decide if it is complete.
+1. Check the existing codebase by using the GetFileTree function and GetFileByPath function.
+2. Use SearchOnInternet function to verify information about the problem. Your knowledge of the problem is stale, so you need to search.
+3. From search results, open and research a page in new browser tab by using OpenURLInBrowserAndAskQuestion function. Do this as many times as you need to understand the task and solution.
+4. Now look at the code base again and verify that the task is complete.
+5. Look at the changelist and see if all changes are valid and we didn't leave any duplicate or redundant files
+5. If you find an issue or a potential bug, call the FileBug function with a detailed bug description and include any relevant code snippets and file paths in the bug description.
+6. Now try to figure out how to run this project. If you find out how to run it, run it from terminal using WriteOnTerminal, GetTerminalText and verify that the task is complete using GetTerminalText and if it's a web project, using OpenURLInBrowserAndAskQuestion if possible.
+7. If you run the project and find an issue or a potential bug, call the FileBug function with a detailed bug description and include any relevant repro steps and URLs in the bug description.
+8. Once you are done reviewing the task, call EndQA function with summary of your findings and also if project was runnable or not and why.
+`
+
+const finalQAInstruction = `You are the final integration QA engineer of your team. Your team has sent you the task they claim to have finished for the user.
+
+1. Look at the original context and requirement of user. You main goal is to CRITICALLY look at each file in the changelist and see if all changes integrate together correctly to solve the overall goal give by the user.
+Sometimes the developers solve individual task but forget to integrate it with the rest of the codebase. Your job is to make sure that all changes are well integrated and solve the overall problem.
+Some common errors are that the files are all defined but are disconnected and don't work together. Or that the files are defined but are not used anywhere. Or that the files are defined but are not connected to the main file.
+
+2. You can read codebase by using the GetFileTree and GetFileByPath functions.
+3. Use SearchOnInternet function to verify information about the problem. Your knowledge of the problem is stale, so you need to search.
+4. From search results, open and research a page in new browser tab by using OpenURLInBrowserAndAskQuestion function. Do this as many times as you need to understand the task and solution.
+5. Now look at the code base again and verify that the changes are well integrated.
+6. If you find an issue or a potential bug, call the FileBug function with a detailed bug description and include any relevant code snippets and file paths in the bug description.
+7. Once you are done reviewing the task, call EndQA function with summary of your findings.
+`
+export async function runQATask(context, localEnv, isFinalQA = false) {
     let bugList = [];
     let endQACalled = false;
     let endQASummary = "";
@@ -108,18 +135,7 @@ export async function runQATask(context, localEnv) {
 
     const messages = [
         {
-            "role": "system", "content": `You are a senior QA engineer of your team. Your team has sent you the task they claim to have finished for the user.
-        Look at the original context and requirement of user. Then review the task and decide if it is complete.
-        1. Check the existing codebase by using the GetFileTree function and GetFileByPath function.
-        2. Use SearchOnInternet function to verify information about the problem. Your knowledge of the problem is stale, so you need to search.
-        3. From search results, open and research a page in new browser tab by using OpenURLInBrowserAndAskQuestion function. Do this as many times as you need to understand the task and solution.
-        4. Now look at the code base again and verify that the task is complete.
-        5. Look at the changelist and see if all changes are valid and we didn't leave any duplicate or redundant files
-        5. If you find an issue or a potential bug, call the FileBug function with a detailed bug description and include any relevant code snippets and file paths in the bug description.
-        6. Now try to figure out how to run this project. If you find out how to run it, run it from terminal using WriteOnTerminal, GetTerminalText and verify that the task is complete using GetTerminalText and if it's a web project, using OpenURLInBrowserAndAskQuestion if possible.
-        7. If you run the project and find an issue or a potential bug, call the FileBug function with a detailed bug description and include any relevant repro steps and URLs in the bug description.
-        8. Once you are done reviewing the task, call EndQA function with summary of your findings and also if project was runnable or not and why.
-    `},
+            "role": "system", "content": isFinalQA ? finalQAInstruction : originalQAInstruction},
         { "role": "user", "content": context + "\n\nChangelist:\n" + localEnv.getChangelistSummary() },
     ];
 

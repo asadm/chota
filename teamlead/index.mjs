@@ -53,6 +53,8 @@ export async function reviewSummary(originalTask, summary, overallTask) {
             Sometimes the task is a no-op and nothing needs to be done. If you think the task is a no-op, approve the summary so the developer can move on to the next task.
         Call the SubmitReview function with your decision and reason.
 
+        Do note that even if developer explains the solution in the summary, you should still reject the summary if you think the developer has not yet completed the task.
+
         The reason should propose the solution if you are rejecting the summary of job. If you are approving, the reason can be short.
         `},
         { "role": "user", "content": `Overall Project Context And Larger Goal:\n${overallTask}\n\nCurrent Task:\n${originalTask}\nTask Done Summary:\n${summary}` },

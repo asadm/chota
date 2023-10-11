@@ -52,7 +52,6 @@ for (const task of taskList) {
 let bugList = [];
 do{
   bugList = [];
-  // const bugs = ["There is no code implementation found for an API endpoint for user login using Firebase Authentication."]
   let summary = "";
   let bugs = [];
   let runnable = "";
@@ -69,7 +68,6 @@ do{
     console.log("QA TASK ERROR", e);
     continue;
   }
-  // console.log("QA Summary", summary, "runnable?", runnable)
   for (const bug of bugs){
     try{
       const leadInstruction = await reviewQABugReport(bug, overallTaskContext);
@@ -84,6 +82,22 @@ do{
     const rep = `Bug Report:\n${bug.bug} \n\nTeam Lead Instructions:\n${bug.leadInstruction}`;
     await runDevTask(rep, overallTaskContext + "\n\n" + rep, localEnv);
   }
+
+  // The final QA check
+  localEnv.overallTaskContext = overallTaskContext;
+  if (bugList.length === 0){
+    console.log("FINAL QA");
+    const resp = await runQATask(overallTaskContext, localEnv, true);
+    summary = resp.summary;
+    bugs = resp.bugs;
+    console.log("QA SUMMARY", bugs.length);
+  }
+  for (const bug of bugs){
+    const rep = `Bug Report:\n${bug} \n\n`;
+    await runDevTask(rep, overallTaskContext + "\n\n" + rep, localEnv);
+  }
+
+  console.log("BUG LIST", bugList.length);
 }
 while(bugList.length > 0);
 

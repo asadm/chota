@@ -371,10 +371,10 @@ export class DevEnvironment {
   }
 
   getChangelistSummary(){
-    if (this.changeList.length===0) return "No files were changed.";
-    
+        if (this.changeList.length===0) return "No files were changed.";
+
     return this.changeList.map(c=>{
-      return `${c.type}: ${c.filePath||c.input} (Reason: ${c.reason||"Unknown"})`
+      return `${c.type}: ${c.filePath||c.input.trim()} (Reason: ${c.reason||"Unknown"})`
     }).join("\n");
   }
 
