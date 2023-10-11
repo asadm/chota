@@ -78,6 +78,26 @@ export async function reviewQABugReport(bugReport, overallTask) {
     return askReviewer(messages);
 }
 
+export async function reviewAskQuestionFromUser(overallTaskContext, questionForUser) {
+    console.log("✋", "reviewAskQuestionFromUser(", questionForUser, ")");
+    const messages = [
+        {
+            "role": "system", "content": `You are the proxy between the user and the contractor who the user has hired to do a job task.
+        
+            Sometimes the contractor asks questions that they can infer from context or search from internet. If you think the question is specific to the task itself and can only be answered by the user. Only then approve the question.
+
+            If you think the question can be answered by searching on internet, or can be assumed for now. Reject with the instruction on what contractor should do.
+
+        Call the SubmitReview function with your decision and reason.
+
+        The reason should propose the solution (like: search for this on internet, etc.) if you are rejecting the question. If you are approving, the reason can be short.
+        `},
+        { "role": "user", "content": `Overall Project Context And Larger Goal:\n${overallTaskContext}\n\nQuestion:\n${questionForUser}` },
+    ];
+    
+    return askReviewer(messages);
+}
+
 function askReviewer(messages){
     return new Promise(async (resolve, reject) => {
 
