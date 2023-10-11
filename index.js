@@ -57,6 +57,8 @@ do{
   let bugs = [];
   let runnable = "";
 
+  // dev changes this so reset
+  localEnv.overallTaskContext = overallTaskContext;
   try{
     const resp = await runQATask(overallTaskContext, localEnv);
     summary = resp.summary;

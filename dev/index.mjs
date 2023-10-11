@@ -95,9 +95,11 @@ export async function runDevTask(taskDescription, overallTask, localEnv) {
 
     If the task is already completed by a previous developer or the task is a no-op, say so.
 
+    Make sure to modify the right file instead of creating a redundant file. (Look at the included changelist so far to see what files have been modified by developers recently for this same task.)
+
     At the end, provide the summary of what you did to the user. The user will review your work and provide feedback. If the user is satisfied, the user will pay you. If the user is not satisfied, the user will not pay you. If the user is not satisfied, they will provide a reason for why they are not satisfied. You can use this reason to retry.
     `},
-        { "role": "user", "content": taskDescription },
+        { "role": "user", "content": `Changelist (so far):\n${localEnv.getChangelistSummary()}\n\nYour Task: ${taskDescription}` },
     ];
 
     let retriesCount = 0;

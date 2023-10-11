@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
 import { reviewChange, reviewTerminalCommand } from './teamlead/index.mjs';
+import kill from "tree-kill";
 import axios from 'axios';
 import {Readability} from '@mozilla/readability';
 import { JSDOM } from 'jsdom';
@@ -20,7 +21,8 @@ export class DevEnvironment {
     this.browser = null;
     this.page = null;
     this.shellProcess = null;
-    this.stdoutData = ''; 
+    this.stdoutData = '';
+    this.changeList = [];
 
     // Start the shell process when the DevEnvironment is created
     this.startShell();
@@ -69,6 +71,7 @@ export class DevEnvironment {
     try {
       // Write the provided command to the terminal
       this.shellProcess.stdin.write(`${input}`);
+      this.changeList.push({type: "WriteOnTerminal", input, summary});
       return `Input written on the terminal: ${input}`;
     } catch (error) {
       throw new Error(`Error writing on the terminal: ${error.message}`);
@@ -321,6 +324,7 @@ export class DevEnvironment {
       // Write content to the file
       fs.writeFileSync(fullPath, content);
       console.log("WriteToFile", fullPath, "written");
+      this.changeList.push({type: "WriteToFile", filePath, summary});
       return `File written successfully at: ${fullPath}`;
     } catch (error) {
       console.log("WriteToFile", error.message)
@@ -346,6 +350,7 @@ export class DevEnvironment {
     try {
       const fullPath = path.join(this.rootPath, filePath);
       fs.unlinkSync(fullPath);
+      this.changeList.push({type: "DeleteFile", filePath, summary});
       return `File deleted successfully: ${fullPath}`;
     } catch (error) {
       throw new Error(`Error deleting file: ${error.message}`);
@@ -356,6 +361,8 @@ export class DevEnvironment {
     try {
       const oldFullPath = path.join(this.rootPath, oldPath);
       const newFullPath = path.join(this.rootPath, newPath);
+      this.changeList.push({type: "DeleteFile", filePath: oldPath});
+      this.changeList.push({type: "WriteToFile", filePath: newPath});
       fs.renameSync(oldFullPath, newFullPath);
       return `File renamed successfully from: ${oldFullPath} to ${newFullPath}`;
     } catch (error) {
@@ -363,10 +370,19 @@ export class DevEnvironment {
     }
   }
 
+  getChangelistSummary(){
+    if (this.changeList.length===0) return "No files were changed.";
+    
+    return this.changeList.map(c=>{
+      return `${c.type}: ${c.filePath||c.input} (Reason: ${c.reason||"Unknown"})`
+    }).join("\n");
+  }
+
   // Clean up the shell process when the DevEnvironment is destroyed
   destroy() {
     if (this.shellProcess) {
-      this.shellProcess.kill();
+      // this.shellProcess.kill();
+      kill(this.shellProcess.pid);
     }
     if (this.page){
       this.closeBrowser();

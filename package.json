@@ -17,6 +17,7 @@
     "openai": "^4.11.1",
     "prompt-sync": "^4.2.0",
     "puppeteer": "^21.3.6",
+    "tree-kill": "^1.2.2",
     "turndown": "^7.1.2"
   }
 }

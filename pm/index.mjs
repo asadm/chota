@@ -7,6 +7,7 @@ import fs from "fs";
 // import { reviewSummary } from '../teamlead/index.mjs';
 import { openai } from '../common/openai.mjs';
 import prompt from 'prompt-sync';
+import { reviewAskQuestionFromUser } from '../teamlead/index.mjs';
 
 const functions = fn;
 const MODEL = "gpt-4-0613" //"gpt-3.5-turbo";
@@ -88,6 +89,12 @@ export async function runPMTask(taskDescription, localEnv) {
         //TODO: add layer of AI here
         "AskQuestion": async function (args) {
             console.log("🤔", args);
+            try{
+                await reviewAskQuestionFromUser(taskDescription, args.question);
+            }
+            catch(e){
+                return e.message;
+            }
             const Answer = prompt({sigint: true})('Answer:');
             return Answer;
             // return "The answer is 42.";
@@ -102,7 +109,7 @@ export async function runPMTask(taskDescription, localEnv) {
             // return "Task completed.";
         }
     };
-    console.log("🐣", "TaskStart(", taskDescription, ")");
+    console.log("🧳", "PMTaskStart(", taskDescription, ")");
     // const task = "Find the port used by this project and change it to 5000.";
     // const task = "Find and move the port constant to index itself, cleanup unused file.";
     // const localEnv = new DevEnvironment(envPath);

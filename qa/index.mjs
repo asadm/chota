@@ -114,12 +114,13 @@ export async function runQATask(context, localEnv) {
         2. Use SearchOnInternet function to verify information about the problem. Your knowledge of the problem is stale, so you need to search.
         3. From search results, open and research a page in new browser tab by using OpenURLInBrowserAndAskQuestion function. Do this as many times as you need to understand the task and solution.
         4. Now look at the code base again and verify that the task is complete.
+        5. Look at the changelist and see if all changes are valid and we didn't leave any duplicate or redundant files
         5. If you find an issue or a potential bug, call the FileBug function with a detailed bug description and include any relevant code snippets and file paths in the bug description.
         6. Now try to figure out how to run this project. If you find out how to run it, run it from terminal using WriteOnTerminal, GetTerminalText and verify that the task is complete using GetTerminalText and if it's a web project, using OpenURLInBrowserAndAskQuestion if possible.
         7. If you run the project and find an issue or a potential bug, call the FileBug function with a detailed bug description and include any relevant repro steps and URLs in the bug description.
         8. Once you are done reviewing the task, call EndQA function with summary of your findings and also if project was runnable or not and why.
     `},
-        { "role": "user", "content": context },
+        { "role": "user", "content": context + "\n\nChangelist:\n" + localEnv.getChangelistSummary() },
     ];
 
     let retryCount = 0;
