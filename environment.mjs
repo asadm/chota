@@ -173,6 +173,9 @@ export class DevEnvironment {
   // }
 
   async SearchOnInternet(query) {
+    if (!serpApiKey){
+      throw new Error("Search engine is offline.");
+    }
     try {
       const response = await axios.get(googleSearchEndpoint, {
           params: {
