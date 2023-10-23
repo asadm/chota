@@ -121,14 +121,14 @@ export async function runPMTask(taskDescription, localEnv) {
         1. Check the existing codebase by using the GetFileTree function and GetFileByPath function.
         2. Use SearchOnInternet function to search for latest solution to the problem. Your knowledge of the problem is stale, so you need to search for the solution.
         3. From search results, open and research a page in new browser tab by using OpenURLInBrowserAndAskQuestion function. Do this as many times as you need to understand the problem and solution.
-        4. Write a detailed list of tasks to complete the job. The developers do not know the details of the overall project, so you need to be very specific in your individual tasks.
-        5. If you need to clarify the task, use the AskQuestion function.
+        4. If you still need to clarify the task, use the AskQuestion function.
+        5. Write a detailed list of one or more tasks to fully complete the job. Be very specific in your individual tasks. Do not make tasks like: create a file, go into directory, open terminal, open editor, etc. Instead, make tasks like: change the port number in the file, or move the port constant to index itself, cleanup unused file.
         6. Once you are satisfied with your task list, call the RunTask function with the task list.
 
-        Do note that each task should be actionable ON ITS OWN. Preferably around 50 lines of code change. If you need to change more than 50 lines of code, break it down into multiple tasks.
+        Do note that each task should be actionable ON ITS OWN. Each should be preferably around 100 lines of code change. If you need to change more than 100 lines of code, break it down into multiple tasks.
 
         Also, avoid putting implementation details in the task list. For example, instead of saying "Change the port number in the file", say "Find the port used by this project and change it to 5000."
-        You may provide code snippets you researched as an example.
+        You may provide code snippets you researched as an example to save developer time.
     `},
         { "role": "user", "content": taskDescription },
     ];

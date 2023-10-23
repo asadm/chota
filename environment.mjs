@@ -55,7 +55,7 @@ export class DevEnvironment {
   async GetTerminalText() {
     const lines = this.stdoutData.split('\n');
     const last100Lines = lines.slice(Math.max(lines.length - 100, 0)).join('\n');
-    
+    console.log("GetTerminalText", last100Lines);
     return last100Lines;
   }
 

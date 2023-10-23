@@ -44,6 +44,25 @@ export async function reviewChange(change, overallTask) {
     return askReviewer(messages);
 }
 
+export async function reviewSummaryLite(originalTask, summary) {
+    console.log("✋", "reviewSummary(", summary, ")");
+    const messages = [
+        {
+            "role": "system", "content": `You are a team lead of a programming team responsible for reviewing job completion by your team to your project. After the job is done, the following is the final summary message by the developer. Does the following message make sense, given the Reason at bottom and overall goal of the project?
+        
+            Sometimes the task is a no-op and nothing needs to be done. If you think the task is a no-op, approve the summary so the developer can move on to the next task.
+        Call the SubmitReview function with your decision and reason.
+
+        Do note that even if developer explains the solution in the summary, you should still reject the summary if you think the developer has not yet completed the task.
+
+        The reason should propose the solution if you are rejecting the summary of job. If you are approving, the reason can be short.
+        `},
+        { "role": "user", "content": `Task:\n${originalTask}\nTask Done Summary:\n${summary}` },
+    ];
+    
+    return askReviewer(messages);
+}
+
 export async function reviewSummary(originalTask, summary, overallTask) {
     console.log("✋", "reviewSummary(", summary, ")");
     const messages = [
