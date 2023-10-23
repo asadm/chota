@@ -1,5 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { localContext } from "../localcontext.mjs";
+import fs from 'fs';
 
 export async function getContextFromIssue() {
   if (!process.env.GITHUB_TOKEN) {
@@ -9,11 +10,21 @@ export async function getContextFromIssue() {
   const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
   });
+  let issue_number;
+
+  if (process.env.GITHUB_EVENT_PATH) {
+    try {
+      const eventData = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
+      issue_number = eventData.issue?.number;
+    } catch (error) {
+      console.error('Failed to read or parse the GITHUB_EVENT_PATH:', error);
+    }
+  }
 
   const context = {
     owner: process.env.GITHUB_REPOSITORY.split('/')[0],
     repo: process.env.GITHUB_REPOSITORY.split('/')[1],
-    issue_number: process.env.GITHUB_EVENT_PATH ? require(process.env.GITHUB_EVENT_PATH).issue.number : undefined,
+    issue_number: issue_number,
     per_page: 100
   };
 
@@ -47,7 +58,7 @@ export async function getContextFromIssue() {
     if (comment.user.login.indexOf('[bot]') === -1) {
       finalContext += `User: ${comment.body}\n`;
     }
-    else{
+    else {
       finalContext += `You: ${comment.body}\n`;
     }
   });
