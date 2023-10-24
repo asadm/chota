@@ -1,8 +1,8 @@
-import { runDevTask } from "./agents/dev/index.mjs";
-import { runQATask } from "./agents/qa/index.mjs";
-import { DevEnvironment } from "./common/environment.mjs";
+import { runDevTask } from "../agents/dev/index.mjs";
+import { runQATask } from "../agents/qa/index.mjs";
+import { DevEnvironment } from "../common/environment.mjs";
 import path from "path";
-import { getContextFromIssue } from "./common/githubContext.mjs";
+import { getContextFromIssue } from "../common/githubContext.mjs";
 
 const envPath = path.join(process.cwd(), process.argv[2] || 'sample');
 const localEnv = new DevEnvironment(envPath);
