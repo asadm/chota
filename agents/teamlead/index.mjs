@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import { openai } from '../common/openai.mjs';
+import { openai } from '../../common/openai.mjs';
 import fn from "./fns.mjs";
 
 const functions = fn;

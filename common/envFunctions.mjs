@@ -72,29 +72,6 @@ const fns = [
       "required": ["url", "question"]
     }
   },
-  // {
-  //   "name": "GetCurrentBrowserTabs",
-  //   "description": "Get the currently open browser tabs",
-  //   "parameters": {
-  //     "type": "object",
-  //     "properties": {},
-  //     "required": []
-  //   }
-  // },
-  // {
-  //   "name": "CloseBrowserTab",
-  //   "description": "Close a browser tab by index. As returned by GetCurrentBrowserTabs function",
-  //   "parameters": {
-  //     "type": "object",
-  //     "properties": {
-  //       "index": {
-  //         "type": "integer",
-  //         "description": "The index of the tab to close"
-  //       }
-  //     },
-  //     "required": ["index"]
-  //   }
-  // },
   {
     "name": "SearchOnInternet",
     "description": "Search the internet with a search query",

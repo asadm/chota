@@ -1,6 +1,6 @@
-import { runDevTask } from "./dev/lite.mjs";
-import { runQATask } from "./qa/index.mjs";
-import { DevEnvironment } from "./environment.mjs";
+import { runDevTask } from "./agents/dev/index.mjs";
+import { runQATask } from "./agents/qa/index.mjs";
+import { DevEnvironment } from "./common/environment.mjs";
 import path from "path";
 import { getContextFromIssue } from "./common/githubContext.mjs";
 

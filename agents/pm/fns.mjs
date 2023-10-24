@@ -1,4 +1,4 @@
-import envFns from "../common/envFunctions.mjs";
+import envFns from "../../common/envFunctions.mjs";
 
 const envFunctionsAvailableToPM = [
   "GetFileTree",

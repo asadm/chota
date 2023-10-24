@@ -1,14 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
-import { reviewChange, reviewTerminalCommand } from './teamlead/index.mjs';
+import { reviewChange, reviewTerminalCommand } from '../agents/teamlead/index.mjs';
 import kill from "tree-kill";
 import axios from 'axios';
 import {Readability} from '@mozilla/readability';
 import { JSDOM } from 'jsdom';
 import TurndownService from 'turndown';
 import puppeteer from 'puppeteer';
-import { runPageQuestioner } from './pagequestioner/index.mjs';
+import { runPageQuestioner } from '../agents/pagequestioner/index.mjs';
 
 const serpApiKey = process.env.SERP_API_KEY;
 const googleSearchEndpoint = 'https://serpapi.com/search';

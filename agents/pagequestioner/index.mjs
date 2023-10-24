@@ -1,7 +1,7 @@
-import { logGray } from '../common/log.mjs';
+import { logGray } from '../../common/log.mjs';
 import path from "path";
 import fs from "fs";
-import { openai } from '../common/openai.mjs';
+import { openai } from '../../common/openai.mjs';
 
 const MODEL = "gpt-3.5-turbo-16k";
 

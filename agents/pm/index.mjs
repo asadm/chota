@@ -1,11 +1,9 @@
 import 'dotenv/config'
 import fn from "./fns.mjs";
-// import { DevEnvironment } from "../environment.mjs";
 import { logGray } from '../common/log.mjs';
 import path from "path";
 import fs from "fs";
-// import { reviewSummary } from '../teamlead/index.mjs';
-import { openai } from '../common/openai.mjs';
+import { openai } from '../../common/openai.mjs';
 import prompt from 'prompt-sync';
 import { reviewAskQuestionFromUser } from '../teamlead/index.mjs';
 

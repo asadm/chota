@@ -1,10 +1,9 @@
 import 'dotenv/config'
-import fn from "../common/envFunctions.mjs";
-import { DevEnvironment } from "../environment.mjs";
+import fn from "../../common/envFunctions.mjs";
 import path from "path";
 import fs from "fs";
-import { reviewSummary } from '../teamlead/index.mjs';
-import { openai } from '../common/openai.mjs';
+import { reviewSummary, reviewSummaryLite } from '../teamlead/index.mjs';
+import { openai } from '../../common/openai.mjs';
 
 const functions = fn;
 const MODEL = "gpt-4-0613" //"gpt-3.5-turbo";
@@ -69,12 +68,11 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function runDevTask(taskDescription, overallTask, localEnv) {
+export async function runDevTask(taskDescription, localEnv) {
     console.log("🐣", "TaskStart(", taskDescription, ")");
     // const task = "Find the port used by this project and change it to 5000.";
     // const task = "Find and move the port constant to index itself, cleanup unused file.";
     let finalSummary = "";
-    localEnv.overallTaskContext = overallTask;
 
     const messages = [
         {
@@ -121,7 +119,7 @@ export async function runDevTask(taskDescription, overallTask, localEnv) {
         if (finish_reason === "stop") {
             // Summary is reviewed by team lead
             try {
-                await reviewSummary(messages[1].content, messages[messages.length - 1].content, overallTask);
+                await reviewSummaryLite(messages[1].content, messages[messages.length - 1].content);
                 console.log("🟢 APPROVED!");
                 finalSummary = messages[messages.length - 1].content;
                 break;
