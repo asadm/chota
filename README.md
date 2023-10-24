@@ -4,7 +4,7 @@
 
 # Chota
 
-Chota is a developer that lives in GitHub action. You can assign it trivial coding tasks using Github Issues and it sends a PR with the solution. It is a young helper based on GPT-4 and GitHub Actions.
+Chota is a developer that lives in your GitHub repo. You can assign it trivial coding tasks using Github Issues and it sends Pull Request with the solution. It is a young helper based on GPT-4 and GitHub Actions that can read your existing codebase, search the internet for research and question itself to avoid mistakes.
 
 ### What's so special about it?
 
