@@ -1,4 +1,4 @@
-| ![header.png](header.png)     | Chota [cho-taa]: Small • Apprentice • Helper for trivial tasks |
+| Chota [cho-taa]: Small • Apprentice • Helper for trivial tasks | ![header.png](header.png) |
 | ---      | ---       |
 
 
