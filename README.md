@@ -1,6 +1,22 @@
-| <h1>Chota</h1><br/> Chota [cho-taa]: Small • Apprentice • Helper for trivial tasks | ![header.png](header.png) |
-| ---      | ---       |
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/asadm/chota">
+    <img src="header.png" alt="Chota">
+  </a>
 
+
+  <p align="center">
+    Chota [cho-taa]: Small • Apprentice • Helper for trivial tasks
+    <br />
+    <br />
+    <a href="https://github.com/asadm/chota/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/asadm/chota/issues">Request Feature</a>
+  </p>
+</div>
+
+## About The Project
 
 Chota is a developer that lives in your GitHub repo. You can assign it trivial coding tasks using Github Issues and it sends Pull Request with the solution. It is a young helper based on GPT-4 and GitHub Actions that can read your existing codebase, search the internet for research and question itself to avoid mistakes.
 
