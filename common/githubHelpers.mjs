@@ -66,6 +66,44 @@ export async function getContextFromIssue() {
   return finalContext;
 }
 
-// getContextFromIssue().catch(error => {
-//   console.error(error);
-// });
+export async function askQuestionOnIssue(question) {
+  if (!process.env.GITHUB_TOKEN) {
+    console.log("No GITHUB_TOKEN found, please modify localcontext.mjs to answer the question and rerun.");
+    return;
+  }
+
+  const octokit = new Octokit({
+    auth: process.env.GITHUB_TOKEN,
+  });
+
+  let issue_number;
+
+  if (process.env.GITHUB_EVENT_PATH) {
+    try {
+      const eventData = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
+      issue_number = eventData.issue?.number;
+    } catch (error) {
+      console.error('Failed to read or parse the GITHUB_EVENT_PATH:', error);
+      return;
+    }
+  }
+
+  if (!issue_number) {
+    console.log("No issue number found!");
+    return;
+  }
+
+  const context = {
+    owner: process.env.GITHUB_REPOSITORY.split('/')[0],
+    repo: process.env.GITHUB_REPOSITORY.split('/')[1],
+    issue_number: issue_number,
+    body: question
+  };
+
+  try {
+    await octokit.rest.issues.createComment(context);
+    console.log("Question posted to the issue successfully!");
+  } catch (error) {
+    console.error('Failed to post the question to the issue:', error);
+  }
+}

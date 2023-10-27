@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
-import { reviewChange, reviewTerminalCommand } from '../agents/teamlead/index.mjs';
+import { reviewChange, reviewTerminalCommand, reviewAskQuestionFromUser } from '../agents/teamlead/index.mjs';
 import kill from "tree-kill";
 import axios from 'axios';
 import {Readability} from '@mozilla/readability';
@@ -9,6 +9,7 @@ import { JSDOM } from 'jsdom';
 import TurndownService from 'turndown';
 import puppeteer from 'puppeteer';
 import { runPageQuestioner } from '../agents/pagequestioner/index.mjs';
+import { askQuestionOnIssue } from './githubHelpers.mjs';
 
 const serpApiKey = process.env.SERP_API_KEY;
 const googleSearchEndpoint = 'https://serpapi.com/search';
@@ -131,47 +132,6 @@ export class DevEnvironment {
     }
   }
 
-  // async GetCurrentBrowserTabs() {
-  //   try {
-  //     if (!this.page) {
-  //       throw new Error('Browser is not open');
-  //     }
-
-  //     const pages = await this.browser.pages();
-  //     const tabs = [];
-
-  //     for (const page of pages) {
-  //       const title = await page.title();
-  //       const pageUrl = page.url();
-  //       tabs.push({ title, url: pageUrl });
-  //     }
-
-  //     return tabs;
-  //   } catch (error) {
-  //     throw new Error(`Error getting current browser tabs: ${error.message}`);
-  //   }
-  // }
-
-  // async CloseBrowserTab(index) {
-  //   try {
-  //     if (!this.page) {
-  //       throw new Error('Browser is not open');
-  //     }
-
-  //     const pages = await this.browser.pages();
-
-  //     if (index >= 0 && index < pages.length) {
-  //       const pageToClose = pages[index];
-  //       await pageToClose.close();
-  //       return `Closed browser tab at index ${index}`;
-  //     } else {
-  //       throw new Error(`Invalid tab index: ${index}`);
-  //     }
-  //   } catch (error) {
-  //     throw new Error(`Error closing browser tab: ${error.message}`);
-  //   }
-  // }
-
   async SearchOnInternet(query) {
     if (!serpApiKey){
       throw new Error("Search engine is offline.");
@@ -290,7 +250,6 @@ export class DevEnvironment {
   }
 
   async WriteToFile({filePath, content, summary}) {
-    //TODO: Doesnt write new file because it reads the file first
     // first review the change
     let oldFile = "";
     try{
@@ -371,6 +330,22 @@ export class DevEnvironment {
     } catch (error) {
       throw new Error(`Error renaming file: ${error.message}`);
     }
+  }
+
+  async AskQuestionFromUser({question}) {
+    console.log("🤔", question);
+    try{
+        await reviewAskQuestionFromUser(this.overallTaskContext, question);
+    }
+    catch(e){
+        return e.message;
+    }
+
+    // question is approved, so ask it
+    await askQuestionOnIssue(question);
+    
+    // must exit for now
+    process.exit(0);
   }
 
   getChangelistSummary(){
