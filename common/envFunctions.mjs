@@ -143,7 +143,21 @@ const fns = [
       },
       "required": ["oldPath", "newPath"]
     }
-  }
+  },
+  {
+    "name": "AskQuestionFromUser",
+    "description": "Ask a clarifying question from the client about the task",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "question": {
+          "type": "string",
+          "description": "The question to ask"
+        }
+      },
+      "required": ["question"]
+    }
+  },
 ]
 
 export default fns;
