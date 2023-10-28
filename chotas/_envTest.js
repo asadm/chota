@@ -9,6 +9,9 @@ const localEnv = new DevEnvironment(envPath, `test the dev environment.`);
 await localEnv.WriteToFile({filePath: "test.json", content: "test time:" + (new Date().toISOString()) , summary: "writing a test json file"});
 await localEnv.RenameFile({oldPath:"test.json", newPath: "test2.json", summary: "renaming a test json file"});
 
+console.log("changelist?")
+const changelist = localEnv.getChangelistSummary();
+console.log(changelist);
 console.log("FINISHED");
 
 // Cleanup and exit any processes that are still running
