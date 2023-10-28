@@ -32,7 +32,7 @@ export class DevEnvironment {
   startShell() {
     try {
       // Start a shell process (e.g., bash)
-      this.shellProcess = spawn('/bin/bash', [], {
+      this.shellProcess = spawn(process.env.SHELL || "bash", [], {
         stdio: ['pipe', 'pipe', 'pipe'], // Set up stdio pipes for stdin, stdout, and stderr
         cwd: this.rootPath, // Set the current working directory
       });
