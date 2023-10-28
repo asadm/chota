@@ -41,7 +41,6 @@ runs:
     - name: Creating or switching branch
       if: steps.check-branch.outputs.status != 200
       run: |
-        which bash
         BRANCH_NAME="issue-${{ github.event.issue.number }}"
         git switch -c $BRANCH_NAME
       shell: bash
@@ -49,6 +48,7 @@ runs:
     - name: Switching to existing branch
       if: steps.check-branch.outputs.status == 200
       run: |
+        which bash
         BRANCH_NAME="issue-${{ github.event.issue.number }}"
         git switch $BRANCH_NAME
       shell: bash
