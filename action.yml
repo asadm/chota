@@ -21,6 +21,28 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Check for "chota" label
+      id: check_label
+      uses: actions/github-script@v5
+      with:
+        script: |
+          const issue_number = ${{ github.event.issue.number }};
+          const owner = `${{ github.repository_owner }}`;
+          const repo = `${{ github.event.repository.name }}`;
+
+          const { data: issue } = await github.rest.issues.get({
+            owner,
+            repo,
+            issue_number
+          });
+
+          const hasChotaLabel = issue.labels.some(label => label.name === 'chota');
+
+          if (!hasChotaLabel) {
+            console.log('The label "chota" is not present on the issue. Exiting workflow.');
+            core.setFailed('Label "chota" not found. Exiting.');
+          }
+        github-token: ${{ inputs.GITHUB_TOKEN }}
     - name: Checkout code
       uses: actions/checkout@v2
       with:
