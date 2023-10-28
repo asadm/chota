@@ -26,7 +26,7 @@ export class DevEnvironment {
     this.changeList = [];
 
     // Start the shell process when the DevEnvironment is created
-    this.startShell();
+    // this.startShell();
   }
 
   startShell() {
