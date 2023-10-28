@@ -119,7 +119,7 @@ export async function runDevTask(taskDescription, localEnv) {
         if (finish_reason === "stop") {
             // Summary is reviewed by team lead
             try {
-                await reviewSummaryLite(messages[1].content, messages[messages.length - 1].content);
+                await reviewSummaryLite(`Task: ${taskDescription}\n\nChangelist (so far): ${localEnv.getChangelistSummary()}`, messages[messages.length - 1].content);
                 console.log("🟢 APPROVED!");
                 finalSummary = messages[messages.length - 1].content;
                 break;

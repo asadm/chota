@@ -4,10 +4,10 @@ import { DevEnvironment } from "../common/environment.mjs";
 import path from "path";
 import { getContextFromIssue } from "../common/githubHelpers.mjs";
 
-const envPath = path.join(process.cwd(), process.argv[2] || 'sample');
-const localEnv = new DevEnvironment(envPath);
-const overallTaskContext = await getContextFromIssue();
 
+const overallTaskContext = await getContextFromIssue();
+const envPath = path.join(process.cwd(), process.argv[2] || 'sample');
+const localEnv = new DevEnvironment(envPath, overallTaskContext);
 // Run first dev task
 const resultSummary = await runDevTask(overallTaskContext, localEnv);
 
