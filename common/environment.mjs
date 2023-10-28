@@ -32,6 +32,8 @@ export class DevEnvironment {
   startShell() {
     try {
       // Start a shell process (e.g., bash)
+      console.log("Starting shell");
+      console.log(process.env)
       this.shellProcess = spawn(process.env.SHELL, [], {
         stdio: ['pipe', 'pipe', 'pipe'], // Set up stdio pipes for stdin, stdout, and stderr
         cwd: this.rootPath, // Set the current working directory
