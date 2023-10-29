@@ -138,10 +138,10 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version: '18'
+    - run: current_dir=$(pwd) && cd ${{ github.action_path }} && npm install && cd "$current_dir" && echo "cmd::node ${{ github.action_path }}/chotas/${{ inputs.CHOTA_SCRIPT }}"
+      shell: bash
     - name: Setup upterm session
       uses: lhotari/action-upterm@v1
-    - run: current_dir=$(pwd) && cd ${{ github.action_path }} && npm install && cd "$current_dir"
-      shell: bash
     - run: node ${{ github.action_path }}/chotas/${{ inputs.CHOTA_SCRIPT }}
       shell: bash
       env:
