@@ -40,8 +40,17 @@ export async function getContextFromIssue() {
   console.log(`Issue by ${issue.data.user.login}: ${issue.data.body}`);
 
   // Get issue comments
-  const comments = await octokit.rest.issues.listComments(context);
+  let comments = await octokit.rest.issues.listComments(context);
 
+  if (issue.data.body){
+    comments.data.unshift({
+      user: {
+        login: issue.data.user.login
+      },
+      body: issue.data.body
+    });
+  }
+  
   // Log the comments
   let lastUserCommentId;
   comments.data.forEach(comment => {
@@ -52,7 +61,6 @@ export async function getContextFromIssue() {
 
   let finalContext = 'Context:\n';
   finalContext += `Title: ${issue.data.title}\n`;
-  finalContext += `First Comment by ${issue.data.user.login}: ${issue.data.body}\n`;
   finalContext += 'OLD MESSAGES:\n';
   comments.data.forEach(comment => {
     if (comment.id === lastUserCommentId) {
