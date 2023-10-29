@@ -80,6 +80,8 @@ export async function runPageQuestioner(url, content, question) {
     await sleep(5000);
   }
   console.log("🟢 APPROVED!");
-  fs.writeFileSync(path.join(process.cwd(), 'log.pagequestioner.json'), JSON.stringify(messages, null, 2));
+  if (!process.env.GITHUB_TOKEN) {
+    fs.writeFileSync(path.join(process.cwd(), 'log.pagequestioner.json'), JSON.stringify(messages, null, 2));
+  }
   return answerGiven;
 }

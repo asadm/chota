@@ -168,8 +168,9 @@ export async function runQATask(context, localEnv, isFinalQA = false) {
         }
         await sleep(5000);
     }
-
-    fs.writeFileSync(path.join(process.cwd(), 'log.qa.json'), JSON.stringify(messages, null, 2));
+    if (!process.env.GITHUB_TOKEN) {
+        fs.writeFileSync(path.join(process.cwd(), 'log.qa.json'), JSON.stringify(messages, null, 2));
+    }
     return {bugs: bugList, summary: endQASummary};
 }
 

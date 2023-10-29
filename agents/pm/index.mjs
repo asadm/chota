@@ -172,7 +172,9 @@ export async function runPMTask(taskDescription, localEnv) {
     }
 
     localEnv.destroy();
-    fs.writeFileSync(path.join(process.cwd(), 'log.pm.json'), JSON.stringify(messages, null, 2));
+    if (!process.env.GITHUB_TOKEN) {
+        fs.writeFileSync(path.join(process.cwd(), 'log.pm.json'), JSON.stringify(messages, null, 2));
+    }
     return taskListFromPM;
 }
 
