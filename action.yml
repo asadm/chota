@@ -175,8 +175,7 @@ runs:
               body: `I have updated code in this branch: ${initialComment}`
             });
           }
-        env:
-          GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        github-token: ${{inputs.GITHUB_TOKEN}}
 
     - name: Commit and push branch
       run: |
