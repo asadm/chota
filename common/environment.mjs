@@ -38,6 +38,8 @@ export class DevEnvironment {
         cwd: this.rootPath, // Set the current working directory
       });
 
+      console.log("Shell started (I think)");
+
       this.shellProcess.stdout.on('data', (data) => {
         this.stdoutData += data.toString(); 
       });
@@ -50,6 +52,7 @@ export class DevEnvironment {
         console.log(`Shell process exited with code ${code} and signal ${signal}`);
       });
     } catch (error) {
+      console.log("Shell didnt start!!!", error);
       throw new Error(`Error starting shell: ${error.message}`);
     }
   }
