@@ -41,11 +41,11 @@ export class DevEnvironment {
       console.log("Shell started (I think)");
 
       this.shellProcess.stdout.on('data', (data) => {
-        this.stdoutData += data.toString(); 
-      });
+                this.stdoutData += data.toString(); 
+              });
 
       this.shellProcess.stderr.on('data', (data) => {
-        this.stdoutData += data.toString(); 
+                this.stdoutData += data.toString(); 
       });
 
       this.shellProcess.on('exit', (code, signal) => {
@@ -58,8 +58,8 @@ export class DevEnvironment {
   }
 
   async GetTerminalText() {
-    const lines = this.stdoutData.split('\n');
-    const last100Lines = lines.slice(Math.max(lines.length - 100, 0)).join('\n');
+        const lines = this.stdoutData.split('\n');
+    const last100Lines = lines.length>100 ? lines.slice(Math.max(lines.length - 100, 0)).join('\n') : lines.join('\n');
     console.log("GetTerminalText", last100Lines);
     return last100Lines;
   }
@@ -77,6 +77,8 @@ export class DevEnvironment {
       // Write the provided command to the terminal
       this.shellProcess.stdin.write(`${input}`);
       this.changeList.push({type: "WriteOnTerminal", input, summary});
+      // sleep for 1 second to make sure the command is executed
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       return `Input written on the terminal: ${input}`;
     } catch (error) {
       throw new Error(`Error writing on the terminal: ${error.message}`);
@@ -327,8 +329,8 @@ export class DevEnvironment {
     try {
       const oldFullPath = path.join(this.rootPath, oldPath);
       const newFullPath = path.join(this.rootPath, newPath);
-      this.changeList.push({type: "DeleteFile", filePath: oldPath});
-      this.changeList.push({type: "WriteToFile", filePath: newPath});
+      this.changeList.push({type: "DeleteFile", filePath: oldPath, summary: "Renaming file"});
+      this.changeList.push({type: "WriteToFile", filePath: newPath, summary: "Renaming file"});
       fs.renameSync(oldFullPath, newFullPath);
       return `File renamed successfully from: ${oldFullPath} to ${newFullPath}`;
     } catch (error) {
@@ -356,7 +358,7 @@ export class DevEnvironment {
         if (this.changeList.length===0) return "No files were changed.";
 
     return this.changeList.map(c=>{
-      return `${c.type}: ${c.filePath||c.input.trim()} (Reason: ${c.reason||"Unknown"})`
+      return `${c.type}: ${c.filePath||c.input.trim()} (Reason: ${c.summary||"Unknown"})`
     }).join("\n");
   }
 
