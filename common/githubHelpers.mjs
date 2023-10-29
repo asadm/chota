@@ -69,7 +69,7 @@ export async function getContextFromIssue() {
     if (comment.user.login.indexOf('[bot]') === -1) {
       finalContext += `User: ${comment.body}\n`;
     }
-    else {
+    else if (!comment.body.includes("Branch:")){
       finalContext += `You: ${comment.body}\n`;
     }
   });
