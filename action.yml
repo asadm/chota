@@ -149,6 +149,35 @@ runs:
           OPENAI_API_KEY: ${{ inputs.OPENAI_API_KEY }}
           SERP_API_KEY: ${{ inputs.SERP_API_KEY }}
 
+    - name: Check for changes and comment if there are updates
+      uses: actions/github-script@v5
+      with:
+        script: |
+          // Check if there are changes in the local git repo
+          const hasChanges = require('child_process')
+            .execSync('git status --porcelain')
+            .toString().trim().length > 0;
+
+          if (hasChanges) {
+            const issue_number = ${{ github.event.issue.number }};
+            const owner = `${{ github.repository_owner }}`;
+            const repo = `${{ github.event.repository.name }}`;
+            const branchLink = `https://github.com/${owner}/${repo}/tree/issue-${issue_number}`;
+
+            // Create the initial comment with the branch link
+            const initialComment = `[issue-${issue_number}](${branchLink})`;
+
+            // Add a new comment in the issue
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number,
+              body: `I have updated code in this branch: ${initialComment}`
+            });
+          }
+        env:
+          GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+
     - name: Commit and push branch
       run: |
         git config --global user.email "bot@domain.com"
