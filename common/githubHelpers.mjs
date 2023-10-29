@@ -50,7 +50,10 @@ export async function getContextFromIssue() {
     }
   });
 
-  let finalContext = 'Context:\nOLD MESSAGES:\n';
+  let finalContext = 'Context:\n';
+  finalContext += `Title: ${issue.data.title}\n`;
+  finalContext += `First Comment by ${issue.data.user.login}: ${issue.data.body}\n`;
+  finalContext += 'OLD MESSAGES:\n';
   comments.data.forEach(comment => {
     if (comment.id === lastUserCommentId) {
       finalContext += `NEW MESSAGES:\n`;
