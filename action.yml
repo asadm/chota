@@ -142,7 +142,7 @@ runs:
       shell: bash
     - name: Setup upterm session
       uses: lhotari/action-upterm@v1
-    - run: node ${{ github.action_path }}/chotas/${{ inputs.CHOTA_SCRIPT }}
+    - run: node ${{ github.action_path }}/chotas/${{ inputs.CHOTA_SCRIPT }} .
       shell: bash
       env:
           GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
