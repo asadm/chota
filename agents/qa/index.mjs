@@ -89,9 +89,8 @@ Look at the original context and requirement of user. Then review the task and d
 4. Now look at the code base again and verify that the task is complete.
 5. Look at the changelist and see if all changes are valid and we didn't leave any duplicate or redundant files
 5. If you find an issue or a potential bug, call the FileBug function with a detailed bug description and include any relevant code snippets and file paths in the bug description.
-6. Now try to figure out how to run this project. If you find out how to run it, run it from terminal using WriteOnTerminal, GetTerminalText and verify that the task is complete using GetTerminalText and if it's a web project, using OpenURLInBrowserAndAskQuestion if possible.
-7. If you run the project and find an issue or a potential bug, call the FileBug function with a detailed bug description and include any relevant repro steps and URLs in the bug description.
-8. Once you are done reviewing the task, call EndQA function with summary of your findings and also if project was runnable or not and why.
+6. If you run the project and find an issue or a potential bug, call the FileBug function with a detailed bug description and include any relevant repro steps and URLs in the bug description.
+7. Once you are done reviewing the task, call EndQA function with summary of your findings and also if project was runnable or not and why.
 `
 
 const finalQAInstruction = `You are the final integration QA engineer of your team. Your team has sent you the task they claim to have finished for the user.

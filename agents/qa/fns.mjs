@@ -5,8 +5,6 @@ const envFunctionsAvailableToQA = [
   "GetFileByPath",
   "SearchOnInternet",
   "OpenURLInBrowserAndAskQuestion",
-  "WriteOnTerminal",
-  "GetTerminalText",
 ]
 
 const fns = [
