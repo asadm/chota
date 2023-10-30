@@ -162,17 +162,19 @@ runs:
             const issue_number = ${{ github.event.issue.number }};
             const owner = `${{ github.repository_owner }}`;
             const repo = `${{ github.event.repository.name }}`;
-            const branchLink = `https://github.com/${owner}/${repo}/tree/issue-${issue_number}`;
+            const compareLink = `https://github.com/${owner}/${repo}/compare/main...issue-${issue_number}`
+            const branchLink =  `https://github.com/${owner}/${repo}/tree/issue-${issue_number}`;
 
             // Create the initial comment with the branch link
-            const initialComment = `[issue-${issue_number}](${branchLink})`;
+            const compareComment = `[issue-${issue_number}](${compareLink})`;
+            const initialComment = `[branch](${branchLink})`;
 
             // Add a new comment in the issue
             await github.rest.issues.createComment({
               owner,
               repo,
               issue_number,
-              body: `I have updated code in this branch: ${initialComment}`
+              body: `I have updated code: ${compareComment} [${initialComment}]`
             });
           }
         github-token: ${{inputs.GITHUB_TOKEN}}
