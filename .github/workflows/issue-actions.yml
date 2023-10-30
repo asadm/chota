@@ -1,0 +1,18 @@
+name: Issue Actions
+
+on:
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  branch-actions:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: asadm/chota@2f49734364b38eb9f439c6903814414a323272cf
+      with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SERP_API_KEY: ${{ secrets.SERP_API_KEY }}
