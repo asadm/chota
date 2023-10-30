@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: asadm/chota@2f49734364b38eb9f439c6903814414a323272cf
+      uses: asadm/chota@3b117de11ebc90e7117895fbad57203c940cba05
       with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
