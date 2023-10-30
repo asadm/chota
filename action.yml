@@ -188,7 +188,7 @@ runs:
         # Check if there are any changes to commit
         if [[ -n $(git diff --cached) ]]; then
           git commit -m "work"
-          git push origin $BRANCH_NAME
+          git push origin $BRANCH_NAME --force
         else
           echo "No changes to commit"
         fi
