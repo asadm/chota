@@ -15,7 +15,7 @@ const serpApiKey = process.env.SERP_API_KEY;
 const googleSearchEndpoint = 'https://serpapi.com/search';
 
 export class DevEnvironment {
-  constructor(rootPath, overallTaskContext) {
+  constructor(rootPath, overallTaskContext, reviewRiskyChanges = false) {
     console.log('>', rootPath)
     this.rootPath = rootPath;
     this.overallTaskContext = overallTaskContext;
@@ -24,6 +24,7 @@ export class DevEnvironment {
     this.shellProcess = null;
     this.stdoutData = '';
     this.changeList = [];
+    this.reviewRiskyChanges = reviewRiskyChanges;
 
     // Start the shell process when the DevEnvironment is created
     this.startShell();
@@ -33,9 +34,14 @@ export class DevEnvironment {
     try {
       // Start a shell process (e.g., bash)
       console.log("Starting shell");
-      this.shellProcess = spawn(process.env.SHELL || 'bash', [], {
+      let shellProcessConfig = {
         stdio: ['pipe', 'pipe', 'pipe'], // Set up stdio pipes for stdin, stdout, and stderr
-      });
+      }
+      if (!process.env.GITHUB_TOKEN) {
+        // This seems to crash on github actions
+        shellProcessConfig.cwd = this.rootPath;
+      }
+      this.shellProcess = spawn(process.env.SHELL || 'bash', [], shellProcessConfig);
 
       console.log("Shell started (I think)");
 
@@ -66,8 +72,10 @@ export class DevEnvironment {
   async WriteOnTerminal({ input, summary }) {
     // first review the change
     try{
-      await reviewTerminalCommand(summary, input, this.overallTaskContext);
-      console.log("WriteOnTerminal approved");
+      if (this.reviewRiskyChanges){
+        await reviewTerminalCommand(summary, input, this.overallTaskContext);
+        console.log("WriteOnTerminal approved");
+      }
     }
     catch(e){
       throw new Error(`Code Reviewer rejected the change: ${e.message}`);
@@ -271,9 +279,11 @@ export class DevEnvironment {
       new: content,
     }
     try{
-      console.log("going for review:",  filePath, summary, path.join(this.rootPath, filePath));
-      const review = await reviewChange(change, this.overallTaskContext);
-      console.log("change approved", review);
+      if (this.reviewRiskyChanges){
+        console.log("going for review:",  filePath, summary, path.join(this.rootPath, filePath));
+        const review = await reviewChange(change, this.overallTaskContext);
+        console.log("change approved", review);
+      }
     }
     catch(e){
       throw new Error(`Code Reviewer rejected the change: ${e.message}`);
@@ -308,8 +318,10 @@ export class DevEnvironment {
       new: "",
     }
     try{
-      const review = await reviewChange(change);
-      console.log("change approved", review);
+      if (this.reviewRiskyChanges){
+        const review = await reviewChange(change);
+        console.log("change approved", review);
+      }
     }
     catch(e){
       throw new Error(`Code Reviewer rejected the change: ${e.message}`);
