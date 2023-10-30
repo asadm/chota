@@ -54,14 +54,14 @@ jobs:
           SERP_API_KEY: ${{ secrets.SERP_API_KEY }}
 ```
 
-- In your GitHub repo, go to `Settings` > `Secrets and variables` > `Actions`. Under `Workflow Permissions`, toggle on `Read & write permissions`.
+- In your GitHub repo, go to `Settings` > `Actions` > `General`. Under `Workflow Permissions`, toggle on `Read & write permissions`.
 
 - Chota uses OpenAI and SERP API, so you will need to get API keys from these providers. Here are the steps to sign up and add these keys to your GitHub repository secrets:
   1. Sign up on OpenAI and generate the API key. 
   2. Sign up on SERP API. The API key can be found on the homepage once you log in.
   3. Go to your GitHub repository.
   4. In the upper-right corner, click `Settings`.
-  5. In the left sidebar, click `Secrets and variables`.
+  5. In the left sidebar, click `Secrets and variables` > `Actions`.
   6. Click `New repository secret`.
   7. Enter a name for the secret in the `Name` field, such as `OPENAI_API_KEY` or `SERP_API_KEY`.
   8. Paste your API key into the `Value` field.
